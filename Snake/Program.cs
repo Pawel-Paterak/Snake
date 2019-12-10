@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Snake.Configurations;
+using System;
 
 namespace Snake
 {
@@ -10,6 +7,10 @@ namespace Snake
     {
         static void Main(string[] args)
         {
+            ConsoleConfiguration consoleConfiguration = new ConsoleConfiguration();
+            consoleConfiguration.Configuration();
+            Core core = new Core();
+            core.Start();
         }
     }
 }
