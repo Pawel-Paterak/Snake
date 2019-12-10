@@ -44,7 +44,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Configurations\ConsoleConfiguration.cs" />
+    <Compile Include="Controlers\KeyboardControl.cs" />
     <Compile Include="Core.cs" />
+    <Compile Include="Game.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
