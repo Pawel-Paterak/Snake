@@ -5,14 +5,12 @@ namespace Snake
 {
     public class Core
     {
-        private Game game;
-        private KeyboardControl keyboardControl = new KeyboardControl();
+        private Game game = new Game();
 
         public void Start()
         {
-            keyboardControl.Start();
+            game.Start();
             Console.ReadKey();
-            keyboardControl.Close();
         }
     }
 }
