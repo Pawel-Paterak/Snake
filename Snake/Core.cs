@@ -1,15 +1,15 @@
-﻿using Snake.Controlers;
+﻿using Snake.Game;
 using System;
 
 namespace Snake
 {
     public class Core
     {
-        private Game game = new Game();
+        private GameManager game = new GameManager();
 
         public void Start()
         {
-            game.Start();
+            game.Start(100);
             Console.ReadKey();
         }
     }

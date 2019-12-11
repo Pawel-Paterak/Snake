@@ -47,7 +47,9 @@
     <Compile Include="Controlers\KeyboardControl.cs" />
     <Compile Include="Core.cs" />
     <Compile Include="Direction.cs" />
-    <Compile Include="Game.cs" />
+    <Compile Include="Game\GameManager.cs" />
+    <Compile Include="Game\Render\GameRender.cs" />
+    <Compile Include="Game\Snake.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
