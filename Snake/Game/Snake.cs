@@ -1,11 +1,11 @@
 ﻿using Snake.Controlers;
+using System.Collections.Generic;
 
 namespace Snake.Game
 {
     public class Snake
     {
-        public int HeadPosX { get; private set; } = 20;
-        public int HeadPosY { get; private set; } = 20;
+        public List<Object> objs = new List<Object>();
 
         private Direction direction = Direction.Up;
         private Direction previousDirection = Direction.Up;
@@ -13,6 +13,7 @@ namespace Snake.Game
 
         public void Start()
         {
+            objs.Add(new Object("Head", new Vector2D(20, 20), '@', true));
             Keyboard.Start();
             Keyboard.PressKeyEvent += OnPressKey;
             Keyboard.KeyboardCloseEvent += OnCloseKeyboard;
@@ -20,6 +21,8 @@ namespace Snake.Game
 
         public void Close()
         {
+            for(int i=0; i<objs.Count; i++)
+                objs[i].Destroy();
             OnCloseKeyboard(true);
             Keyboard.Close();
         }
@@ -37,16 +40,16 @@ namespace Snake.Game
             switch (direction)
             {
                 case Direction.Up:
-                    HeadPosY--;
+                    objs[0].position.y--;
                     break;
                 case Direction.Down:
-                    HeadPosY++;
+                    objs[0].position.y++;
                     break;
                 case Direction.Left:
-                    HeadPosX--;
+                    objs[0].position.x--;
                     break;
                 case Direction.Right:
-                    HeadPosX++;
+                    objs[0].position.x++;
                     break;
             }
             previousDirection = direction;

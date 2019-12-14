@@ -48,8 +48,10 @@
     <Compile Include="Core.cs" />
     <Compile Include="Direction.cs" />
     <Compile Include="Game\GameManager.cs" />
+    <Compile Include="Game\Object.cs" />
     <Compile Include="Game\Render\GameRender.cs" />
     <Compile Include="Game\Snake.cs" />
+    <Compile Include="Game\Vector2D.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -1,5 +1,6 @@
 ﻿using Snake.Game.Render;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 
 namespace Snake.Game
@@ -10,6 +11,7 @@ namespace Snake.Game
         private bool isRunning = true;
         private Snake snake = new Snake();
         private GameRender render = new GameRender();
+        private static List<Object> objects = new List<Object>();
 
         public void Start(int refreshTime)
         {
@@ -33,7 +35,18 @@ namespace Snake.Game
 
         private void Render()
         {
-            render.Write("@", snake.HeadPosX, snake.HeadPosY);
+            foreach(Object obj in objects)
+            {
+                if(obj.charRender != ' ')
+                    render.Write(obj.charRender+"", obj.position.x, obj.position.y);
+            }
+
         }
+
+        public static void AddObject(Object obj)
+            => objects.Add(obj);
+
+        public static void RemoveObject(Object obj)
+            => objects.Remove(obj);
     }
 }
