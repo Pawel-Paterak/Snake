@@ -5,7 +5,7 @@ namespace Snake.Game
 {
     public class Snake
     {
-        public List<Object> objs = new List<Object>();
+        public List<Object> snakeBody = new List<Object>();
 
         private Direction direction = Direction.Up;
         private Direction previousDirection = Direction.Up;
@@ -13,7 +13,7 @@ namespace Snake.Game
 
         public void Start()
         {
-            objs.Add(new Object("Head", new Vector2D(20, 20), '@', true));
+            snakeBody.Add(new Object("Head", new Vector2D(20, 20), '@', true));
             Keyboard.Start();
             Keyboard.PressKeyEvent += OnPressKey;
             Keyboard.KeyboardCloseEvent += OnCloseKeyboard;
@@ -21,39 +21,66 @@ namespace Snake.Game
 
         public void Close()
         {
-            for(int i=0; i<objs.Count; i++)
-                objs[i].Destroy();
+            for(int i=0; i<snakeBody.Count; i++)
+                snakeBody[i].Destroy();
             OnCloseKeyboard(true);
             Keyboard.Close();
         }
 
         public bool Move()
         {
-            if ((previousDirection == Direction.Up && direction == Direction.Down) ||
-                    (previousDirection == Direction.Down && direction == Direction.Up) ||
-                    (previousDirection == Direction.Left && direction == Direction.Right) ||
-                    (previousDirection == Direction.Right && direction == Direction.Left))
-            {
-                return false;
-            }
+            Vector2D vecDirection = VectorDirection(direction);
 
+            if (!VeryficationDirection())
+                return false;
+
+            if (VeryficationDirectionCollision(vecDirection))
+                return false;
+
+            snakeBody[0].position += vecDirection;
+            previousDirection = direction;
+            return true;
+        }
+
+        private Vector2D VectorDirection(Direction direction)
+        {
+            Vector2D vectorDirection = new Vector2D();
             switch (direction)
             {
                 case Direction.Up:
-                    objs[0].position.y--;
+                    vectorDirection.y--;
                     break;
                 case Direction.Down:
-                    objs[0].position.y++;
+                    vectorDirection.y++;
                     break;
                 case Direction.Left:
-                    objs[0].position.x--;
+                    vectorDirection.x--;
                     break;
                 case Direction.Right:
-                    objs[0].position.x++;
+                    vectorDirection.x++;
                     break;
             }
-            previousDirection = direction;
+            return vectorDirection;
+        }
+
+        private bool VeryficationDirection()
+        {
+            if ((previousDirection == Direction.Up && direction == Direction.Down) ||
+                   (previousDirection == Direction.Down && direction == Direction.Up) ||
+                   (previousDirection == Direction.Left && direction == Direction.Right) ||
+                   (previousDirection == Direction.Right && direction == Direction.Left))
+            {
+                return false;
+            }
             return true;
+        }
+
+        private bool VeryficationDirectionCollision(Vector2D direction)
+        {
+            Object obj = GameManager.GetObject(snakeBody[0].position+ direction);
+            if (obj != null && obj.collision)
+                return true;
+            return false;
         }
 
         private void OnPressKey(char key)

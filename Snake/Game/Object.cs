@@ -9,7 +9,7 @@ namespace Snake.Game
     public class Object
     {
         public string name { get; private set; } = "Default";
-        public Vector2D position { get; private set; } = new Vector2D(0, 0);
+        public Vector2D position { get; set; } = new Vector2D(0, 0);
         public char charRender { get; private set; } = ' ';
         public bool collision { get; private set; }
 

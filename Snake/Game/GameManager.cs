@@ -9,8 +9,8 @@ namespace Snake.Game
     {
         private int refreshTime = 50;
         private bool isRunning = true;
-        private Snake snake = new Snake();
-        private GameRender render = new GameRender();
+        private readonly Snake snake = new Snake();
+        private readonly GameRender render = new GameRender();
         private static List<Object> objects = new List<Object>();
 
         public void Start(int refreshTime)
@@ -40,11 +40,18 @@ namespace Snake.Game
                 if(obj.charRender != ' ')
                     render.Write(obj.charRender+"", obj.position.x, obj.position.y);
             }
+        }
 
+        public static Object GetObject(Vector2D position)
+        {
+            foreach (Object obj in objects)
+                if (obj.position == position)
+                    return obj;
+            return null;
         }
 
         public static void AddObject(Object obj)
-            => objects.Add(obj);
+           => objects.Add(obj);
 
         public static void RemoveObject(Object obj)
             => objects.Remove(obj);
