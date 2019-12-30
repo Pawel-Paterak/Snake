@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Snake.Game.Render
 {
-    public class GameRender
+    public class ConsoleRender
     {
         public void SetCursor(int x, int y)
         {
