@@ -4,9 +4,10 @@ namespace Snake.Configurations
 {
     public class ConsoleConfiguration
     {
+        public int widht {get; private set;} = 40;
+        public int height { get; private set; } = 40;
+
         private const string title = "Snake";
-        private const int widht = 40;
-        private const int height = 40;
         private const bool cursorVisible = false;
 
         public void Configuration()
