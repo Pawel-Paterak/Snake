@@ -9,6 +9,11 @@ namespace Snake.Game
     public class GameManager
     {
         public int RefreshTime { get; set; } = 50;
+
+        private readonly int offsetLeftWall = 0;
+        private readonly int offsetRightWall = 1;
+        private readonly int offsetUpWall = 0;
+        private readonly int offsetDownWall = 2;
         private bool isRunning = true;
         private readonly Snake snake = new Snake();
         private readonly ConsoleRender render = new ConsoleRender();
@@ -17,6 +22,7 @@ namespace Snake.Game
         public void Start()
         {
             snake.Start();
+            AddWalls();
             Loop();
         }
 
@@ -31,8 +37,23 @@ namespace Snake.Game
                     isRunning = false;
                 Render();
                 Thread.Sleep(RefreshTime);
-                Console.Clear();
+                render.Clear();
             } while (isRunning);
+        }
+
+        private void AddWalls()
+        {
+            ConsoleConfiguration console = new ConsoleConfiguration();
+            for (int x = 0; x < console.widht; x++)
+            {
+                Object wallUp = new Object("Wall", new Vector2D(x, offsetUpWall), '#', ConsoleColor.White, true);
+                Object wallDown = new Object("Wall", new Vector2D(x, console.height - offsetDownWall), '#', ConsoleColor.White, true);
+            }
+            for (int y = 0; y < console.height-1; y++)
+            {
+                Object wallLeft = new Object("Wall", new Vector2D(offsetLeftWall, y), '#', ConsoleColor.White, true);
+                Object wallRight = new Object("Wall", new Vector2D(console.widht - offsetRightWall, y), '#', ConsoleColor.White, true);
+            }
         }
 
         private void GenerateApple()
