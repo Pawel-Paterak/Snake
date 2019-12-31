@@ -82,7 +82,14 @@ namespace Snake.Game
 
             if(obj != null && !obj.collision)
             {
-
+                switch(obj.name)
+                {
+                    case "apple":
+                        {
+                            obj.Destroy();
+                            break;
+                        }
+                }
             }
 
             return false;
