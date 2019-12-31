@@ -36,6 +36,7 @@ namespace Snake.Game
             if (VeryficationDirectionCollision(vecDirection))
                 return false;
 
+            MoveBody();
             SnakeBody[0].position += vecDirection;
             previousDirection = direction;
             return true;
@@ -87,12 +88,25 @@ namespace Snake.Game
                     case "apple":
                         {
                             obj.Destroy();
+                            AddBody();
                             break;
                         }
                 }
             }
 
             return false;
+        }
+
+        private void AddBody()
+        {
+            SnakeBody.Add(new Object("Body"+(SnakeBody.Count-1), new Vector2D(20, 20), '@', ConsoleColor.White, true));
+        }
+
+        private void MoveBody()
+        {
+            for (int i = SnakeBody.Count - 1; i > 0; i--)
+                if (SnakeBody[i] != null && SnakeBody[i - 1] != null)
+                    SnakeBody[i].position = SnakeBody[i - 1].position;
         }
 
         private void OnPressKey(char key)

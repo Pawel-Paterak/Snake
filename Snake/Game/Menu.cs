@@ -48,7 +48,7 @@ namespace Snake.Game
                     case MenuEnum.Levels:
                         {
                             LevelsMenuRender();
-                            isLoop = !LevelsMenuRender(getKey());
+                            isLoop = !LevelsMenu(getKey());
                             break;
                         }
                 }
@@ -129,7 +129,7 @@ namespace Snake.Game
             render.Write(text, widht - offsetXText, height + 3);
         }
 
-        private bool LevelsMenuRender(char key)
+        private bool LevelsMenu(char key)
         {
             switch (key)
             {
@@ -140,12 +140,12 @@ namespace Snake.Game
                     }
                 case '2':
                     {
-                        game.RefreshTime = 50;
+                        game.RefreshTime = 60;
                         break;
                     }
                 case '3':
                     {
-                        game.RefreshTime = 25;
+                        game.RefreshTime = 30;
                         break;
                     }
                 case '4':
