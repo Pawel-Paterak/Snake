@@ -3,15 +3,15 @@ using System.Threading.Tasks;
 
 namespace Snake.Controlers
 {
-    public class KeyboardControl
+    public static class KeyboardControl
     {
-        public Action<char> PressKeyEvent { get; set; }
-        public Action<bool> KeyboardCloseEvent { get; set; }
+        public static Action<char> PressKeyEvent { get; set; }
+        public static Action<bool> KeyboardCloseEvent { get; set; }
 
-        private bool isRunning { get; set; } = false;
-        private Task LoopTask { get; set; }
+        private static bool isRunning { get; set; } = false;
+        private static Task LoopTask { get; set; }
 
-        public void Start()
+        public static void Start()
         {
             if(!isRunning)
             {
@@ -21,7 +21,7 @@ namespace Snake.Controlers
             }
         }
 
-        private void Loop()
+        private static void Loop()
         {
             do
             {
@@ -31,7 +31,7 @@ namespace Snake.Controlers
             KeyboardCloseEvent?.Invoke(true);
         }
 
-        public void Close()
+        public static void Close()
         {
             isRunning = false;
             LoopTask.Wait();

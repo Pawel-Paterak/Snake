@@ -7,15 +7,14 @@ namespace Snake.Game
 {
     public class GameManager
     {
-        private int refreshTime = 50;
+        public int RefreshTime = 50;
         private bool isRunning = true;
         private readonly Snake snake = new Snake();
-        private readonly GameRender render = new GameRender();
+        private readonly ConsoleRender render = new ConsoleRender();
         private static List<Object> objects = new List<Object>();
 
-        public void Start(int refreshTime)
+        public void Start()
         {
-            this.refreshTime = refreshTime;
             snake.Start();
             Loop();
         }
@@ -28,7 +27,7 @@ namespace Snake.Game
                 if(!isMove)
                     isRunning = false;
                 Render();
-                Thread.Sleep(refreshTime);
+                Thread.Sleep(RefreshTime);
                 Console.Clear();
             } while (isRunning);
         }
