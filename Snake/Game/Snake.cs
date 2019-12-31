@@ -1,18 +1,19 @@
-﻿using Snake.Controlers;
+﻿using System;
+using Snake.Controlers;
 using System.Collections.Generic;
 
 namespace Snake.Game
 {
     public class Snake
     {
-        public List<Object> snakeBody = new List<Object>();
+        public List<Object> SnakeBody { get; private set; } = new List<Object>();
 
         private Direction direction = Direction.Up;
         private Direction previousDirection = Direction.Up;
 
         public void Start()
         {
-            snakeBody.Add(new Object("Head", new Vector2D(20, 20), '@', true));
+            SnakeBody.Add(new Object("Head", new Vector2D(20, 20), '@', ConsoleColor.White, true));
             KeyboardControl.Start();
             KeyboardControl.PressKeyEvent += OnPressKey;
             KeyboardControl.KeyboardCloseEvent += OnCloseKeyboard;
@@ -20,8 +21,8 @@ namespace Snake.Game
 
         public void Close()
         {
-            for(int i=0; i<snakeBody.Count; i++)
-                snakeBody[i].Destroy();
+            for(int i=0; i<SnakeBody.Count; i++)
+                SnakeBody[i].Destroy();
             OnCloseKeyboard(true);
         }
 
@@ -35,7 +36,7 @@ namespace Snake.Game
             if (VeryficationDirectionCollision(vecDirection))
                 return false;
 
-            snakeBody[0].position += vecDirection;
+            SnakeBody[0].position += vecDirection;
             previousDirection = direction;
             return true;
         }
@@ -75,9 +76,15 @@ namespace Snake.Game
 
         private bool VeryficationDirectionCollision(Vector2D direction)
         {
-            Object obj = GameManager.GetObject(snakeBody[0].position+ direction);
+            Object obj = GameManager.GetObject(SnakeBody[0].position+ direction);
             if (obj != null && obj.collision)
                 return true;
+
+            if(obj != null && !obj.collision)
+            {
+
+            }
+
             return false;
         }
 
