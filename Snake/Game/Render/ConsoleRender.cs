@@ -9,6 +9,9 @@ namespace Snake.Game.Render
 {
     public class ConsoleRender
     {
+        public void Clear()
+           => Console.Clear();
+
         public void SetCursor(int x, int y)
         {
             ConsoleConfiguration consoleConfig = new ConsoleConfiguration();

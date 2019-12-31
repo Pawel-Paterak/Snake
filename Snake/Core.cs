@@ -1,4 +1,5 @@
-﻿using Snake.Game;
+﻿using Snake.Controlers;
+using Snake.Game;
 using Snake.Game.Enums;
 using System;
 
@@ -15,6 +16,8 @@ namespace Snake
             menu.Canvas = MenuEnum.MainMenu;
             menu.RenderCanvas();
 
+            game.Start();
+            KeyboardControl.Close();
             Console.ReadKey();
         }
     }

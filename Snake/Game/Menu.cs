@@ -1,4 +1,5 @@
-﻿using Snake.Controlers;
+﻿using Snake.Configurations;
+using Snake.Controlers;
 using Snake.Game.Enums;
 using Snake.Game.Render;
 using System;
@@ -9,7 +10,6 @@ namespace Snake.Game
     {
         private readonly GameManager game = new GameManager();
         private readonly ConsoleRender render = new ConsoleRender();
-        private readonly KeyboardControl keyboardControl = new KeyboardControl();
         private Func<char> getKey;
         private bool isNewKey = false;
         private char Key { get => key;
@@ -25,13 +25,14 @@ namespace Snake.Game
         public Menu(GameManager game)
         {
             this.game = game;
+            KeyboardControl.Start();
             getKey = GetKey;
-            keyboardControl.PressKeyEvent += OnPressKey;
-            keyboardControl.Start();
         }
 
         public void RenderCanvas()
         {
+            KeyboardControl.PressKeyEvent += OnPressKey;
+
             bool isLoop = true;
             do
             {
@@ -51,11 +52,41 @@ namespace Snake.Game
                         }
                 }
             } while (isLoop);
+            KeyboardControl.PressKeyEvent -= OnPressKey;
         }
 
         private void MainMenuRender()
         {
-            render.Write("This is Main menu");
+            render.Clear();
+            ConsoleConfiguration console = new ConsoleConfiguration();
+            Frame();
+            int offsetXText = 5;
+            int widht = console.widht / 2;
+            int height = console.height / 2;
+            string text = "1) Start";
+            render.Write(text, widht - offsetXText, height - 3);
+            text = "2) Multiplayer(disable)";
+            render.Write(text, widht- offsetXText, height-1);
+            text = "3) Scores(disable)";
+            render.Write(text, widht - offsetXText, height+1);
+            text = "4) Exit";
+            render.Write(text, widht - offsetXText, height+3);
+        }
+
+        private void Frame()
+        {
+            ConsoleConfiguration console = new ConsoleConfiguration();
+            for (int x = 0; x < console.widht; x++)
+            {
+                render.Write("#", x, 0);
+                render.Write("#", x, console.height - 2);
+            }
+
+            for (int y = 0; y < console.height - 1; y++)
+            {
+                render.Write("#", 0, y);
+                render.Write("#", console.widht - 1, y);
+            }
         }
 
         private bool MainMenu(char key)
@@ -67,6 +98,11 @@ namespace Snake.Game
                         Canvas = MenuEnum.Levels;
                         return false;
                     }
+                case '4':
+                    {
+                        CloseConsole();
+                        return true;
+                    }
                 default:
                     {
                         return false;
@@ -76,18 +112,52 @@ namespace Snake.Game
 
         private void LevelsMenuRender()
         {
-            render.Write("This is Levels menu");
+            render.Clear();
+            ConsoleConfiguration console = new ConsoleConfiguration();
+            Frame();
+            int offsetXText = 5;
+            int widht = console.widht / 2;
+            int height = console.height / 2;
+            string text = "1) Easy";
+            render.Write(text, widht - offsetXText, height - 3);
+            text = "2) Medium";
+            render.Write(text, widht - offsetXText, height - 1);
+            text = "3) Hard";
+            render.Write(text, widht - offsetXText, height + 1);
+            text = "4) Back";
+            render.Write(text, widht - offsetXText, height + 3);
         }
 
         private bool LevelsMenuRender(char key)
         {
             switch (key)
             {
+                case '1':
+                    {
+                        game.RefreshTime = 100;
+                        break;
+                    }
+                case '2':
+                    {
+                        game.RefreshTime = 50;
+                        break;
+                    }
+                case '3':
+                    {
+                        game.RefreshTime = 25;
+                        break;
+                    }
+                case '4':
+                    {
+                        Canvas = MenuEnum.MainMenu;
+                        return false;
+                    }
                 default:
                     {
                         return false;
                     }
             }
+            return true;
         }
 
         private void OnPressKey(char key)
@@ -110,10 +180,10 @@ namespace Snake.Game
             return key;
         }
 
-        public void Close()
+        private void CloseConsole()
         {
-            keyboardControl.PressKeyEvent -= OnPressKey;
-            keyboardControl.Close();
+            KeyboardControl.Close();
+            Environment.Exit(0);
         }
     }
 }

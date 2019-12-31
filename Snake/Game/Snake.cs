@@ -9,14 +9,13 @@ namespace Snake.Game
 
         private Direction direction = Direction.Up;
         private Direction previousDirection = Direction.Up;
-        private KeyboardControl Keyboard { get; } = new KeyboardControl();
 
         public void Start()
         {
             snakeBody.Add(new Object("Head", new Vector2D(20, 20), '@', true));
-            Keyboard.Start();
-            Keyboard.PressKeyEvent += OnPressKey;
-            Keyboard.KeyboardCloseEvent += OnCloseKeyboard;
+            KeyboardControl.Start();
+            KeyboardControl.PressKeyEvent += OnPressKey;
+            KeyboardControl.KeyboardCloseEvent += OnCloseKeyboard;
         }
 
         public void Close()
@@ -24,7 +23,6 @@ namespace Snake.Game
             for(int i=0; i<snakeBody.Count; i++)
                 snakeBody[i].Destroy();
             OnCloseKeyboard(true);
-            Keyboard.Close();
         }
 
         public bool Move()
@@ -104,8 +102,8 @@ namespace Snake.Game
 
         private void OnCloseKeyboard(bool closing)
         {
-            Keyboard.PressKeyEvent -= OnPressKey;
-            Keyboard.KeyboardCloseEvent -= OnCloseKeyboard;
+            KeyboardControl.PressKeyEvent -= OnPressKey;
+            KeyboardControl.KeyboardCloseEvent -= OnCloseKeyboard;
         }
     }
 }
