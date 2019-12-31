@@ -8,9 +8,11 @@ namespace Snake.Game
 {
     public class Menu
     {
-        private readonly GameManager game = new GameManager();
+        public MenuEnum Canvas { get; set; }
+
+        private readonly GameManager game;
         private readonly ConsoleRender render = new ConsoleRender();
-        private Func<char> getKey;
+        private readonly Func<char> getKey;
         private bool isNewKey = false;
         private char Key { get => key;
             set
@@ -20,7 +22,6 @@ namespace Snake.Game
             }
         }
         private char key;
-        public MenuEnum Canvas;
 
         public Menu(GameManager game)
         {
@@ -47,7 +48,7 @@ namespace Snake.Game
                     case MenuEnum.Levels:
                         {
                             LevelsMenuRender();
-                            isLoop = !LevelsMenuRender(getKey());
+                            isLoop = !LevelsMenu(getKey());
                             break;
                         }
                 }
@@ -128,7 +129,7 @@ namespace Snake.Game
             render.Write(text, widht - offsetXText, height + 3);
         }
 
-        private bool LevelsMenuRender(char key)
+        private bool LevelsMenu(char key)
         {
             switch (key)
             {
@@ -139,12 +140,12 @@ namespace Snake.Game
                     }
                 case '2':
                     {
-                        game.RefreshTime = 50;
+                        game.RefreshTime = 60;
                         break;
                     }
                 case '3':
                     {
-                        game.RefreshTime = 25;
+                        game.RefreshTime = 30;
                         break;
                     }
                 case '4':
@@ -166,18 +167,18 @@ namespace Snake.Game
         private char GetKey()
         {
             bool isLoop = true;
-            char key = ' ';
+            char myKey = ' ';
             do
             {
                 if (isNewKey)
                 {
                     isLoop = false;
                     isNewKey = false;
-                    key = Key;
+                    myKey = Key;
                 }
 
             } while (isLoop);
-            return key;
+            return myKey;
         }
 
         private void CloseConsole()
