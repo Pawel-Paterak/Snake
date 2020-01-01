@@ -39,6 +39,15 @@ namespace Snake.Game
                 Thread.Sleep(RefreshTime);
                 render.Clear();
             } while (isRunning);
+            GameOver();
+        }
+
+        private void GameOver()
+        {
+            ConsoleConfiguration console = new ConsoleConfiguration();
+            string text = "GameOver, you scores " + snake.Scores;
+            render.Write(text, console.widht / 2 - text.Length / 2, console.height / 2);
+            Console.ReadKey();
         }
 
         private void AddWalls()

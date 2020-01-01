@@ -7,8 +7,8 @@ namespace Snake.Game
     public class Snake
     {
         public List<Object> SnakeBody { get; private set; } = new List<Object>();
+        public int Scores { get; private set; }
 
-        private int scores;
         private Direction direction = Direction.Up;
         private Direction previousDirection = Direction.Up;
 
@@ -24,7 +24,7 @@ namespace Snake.Game
         {
             for(int i=0; i<SnakeBody.Count; i++)
                 SnakeBody[i].Destroy();
-            OnCloseKeyboard(true);
+            OnCloseKeyboard();
         }
 
         public bool Move()
@@ -90,7 +90,7 @@ namespace Snake.Game
                         {
                             obj.Destroy();
                             AddBody();
-                            scores += 10;
+                            Scores += 10;
                             break;
                         }
                 }
@@ -130,7 +130,7 @@ namespace Snake.Game
             }
         }
 
-        private void OnCloseKeyboard(bool closing)
+        private void OnCloseKeyboard()
         {
             KeyboardControl.PressKeyEvent -= OnPressKey;
             KeyboardControl.KeyboardCloseEvent -= OnCloseKeyboard;

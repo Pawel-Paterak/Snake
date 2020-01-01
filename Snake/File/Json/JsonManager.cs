@@ -29,5 +29,8 @@ namespace Snake.File.Json
                     temp = (T)serializer.Deserialize(reader, typeof(T));
             return temp;
         }
+
+        public bool Exists(string path)
+         => Directory.Exists(path);
     }
 }
