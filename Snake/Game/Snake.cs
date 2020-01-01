@@ -8,6 +8,7 @@ namespace Snake.Game
     {
         public List<Object> SnakeBody { get; private set; } = new List<Object>();
 
+        private int scores;
         private Direction direction = Direction.Up;
         private Direction previousDirection = Direction.Up;
 
@@ -89,6 +90,7 @@ namespace Snake.Game
                         {
                             obj.Destroy();
                             AddBody();
+                            scores += 10;
                             break;
                         }
                 }
