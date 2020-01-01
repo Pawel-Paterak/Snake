@@ -3,6 +3,7 @@
     public enum MenuEnum
     {
         MainMenu,
-        Levels
+        Levels,
+        Scores
     }
 }

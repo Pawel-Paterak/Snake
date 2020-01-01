@@ -51,6 +51,12 @@ namespace Snake.Game
                             isLoop = !LevelsMenu(getKey());
                             break;
                         }
+                    case MenuEnum.Scores:
+                        {
+                            ScoresMenuRender();
+                            isLoop = !ScoresMenu(getKey());
+                            break;
+                        }
                 }
             } while (isLoop);
             KeyboardControl.PressKeyEvent -= OnPressKey;
@@ -68,7 +74,7 @@ namespace Snake.Game
             render.Write(text, widht - offsetXText, height - 3);
             text = "2) Multiplayer(disable)";
             render.Write(text, widht- offsetXText, height-1);
-            text = "3) Scores(disable)";
+            text = "3) Scores";
             render.Write(text, widht - offsetXText, height+1);
             text = "4) Exit";
             render.Write(text, widht - offsetXText, height+3);
@@ -97,6 +103,11 @@ namespace Snake.Game
                 case '1':
                     {
                         Canvas = MenuEnum.Levels;
+                        return false;
+                    }
+                case '3':
+                    {
+                        Canvas = MenuEnum.Scores;
                         return false;
                     }
                 case '4':
@@ -149,6 +160,36 @@ namespace Snake.Game
                         break;
                     }
                 case '4':
+                    {
+                        Canvas = MenuEnum.MainMenu;
+                        return false;
+                    }
+                default:
+                    {
+                        return false;
+                    }
+            }
+            return true;
+        }
+
+        private void ScoresMenuRender()
+        {
+            render.Clear();
+            ConsoleConfiguration console = new ConsoleConfiguration();
+            Frame();
+            for(int i=0; i<17; i++)
+            {
+                render.Write((i + 1) + ": ", 2, 2+2*i);
+            }
+
+            render.Write("1) back", 2, 36);
+        }
+
+        private bool ScoresMenu(char key)
+        {
+            switch (key)
+            {
+                case '1':
                     {
                         Canvas = MenuEnum.MainMenu;
                         return false;
