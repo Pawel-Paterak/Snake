@@ -12,16 +12,16 @@ namespace Snake.Game
 
         private readonly GameManager game;
         private readonly ConsoleRender render = new ConsoleRender();
-        private readonly Func<char> getKey;
+        private readonly Func<ConsoleKey> getKey;
         private bool isNewKey = false;
-        private char Key { get => key;
+        private ConsoleKey Key { get => key;
             set
             {
                 key = value;
                 isNewKey = true;
             }
         }
-        private char key;
+        private ConsoleKey key;
 
         public Menu(GameManager game)
         {
@@ -96,21 +96,21 @@ namespace Snake.Game
             }
         }
 
-        private bool MainMenu(char key)
+        private bool MainMenu(ConsoleKey key)
         {
             switch(key)
             {
-                case '1':
+                case ConsoleKey.D1:
                     {
                         Canvas = MenuEnum.Levels;
                         return false;
                     }
-                case '3':
+                case ConsoleKey.D3:
                     {
                         Canvas = MenuEnum.Scores;
                         return false;
                     }
-                case '4':
+                case ConsoleKey.D4:
                     {
                         CloseConsole();
                         return true;
@@ -140,26 +140,26 @@ namespace Snake.Game
             render.Write(text, widht - offsetXText, height + 3);
         }
 
-        private bool LevelsMenu(char key)
+        private bool LevelsMenu(ConsoleKey key)
         {
             switch (key)
             {
-                case '1':
+                case ConsoleKey.D1:
                     {
                         game.RefreshTime = 100;
                         break;
                     }
-                case '2':
+                case ConsoleKey.D2:
                     {
                         game.RefreshTime = 60;
                         break;
                     }
-                case '3':
+                case ConsoleKey.D3:
                     {
                         game.RefreshTime = 30;
                         break;
                     }
-                case '4':
+                case ConsoleKey.D4:
                     {
                         Canvas = MenuEnum.MainMenu;
                         return false;
@@ -185,11 +185,11 @@ namespace Snake.Game
             render.Write("1) back", 2, 36);
         }
 
-        private bool ScoresMenu(char key)
+        private bool ScoresMenu(ConsoleKey key)
         {
             switch (key)
             {
-                case '1':
+                case ConsoleKey.D1:
                     {
                         Canvas = MenuEnum.MainMenu;
                         return false;
@@ -202,13 +202,13 @@ namespace Snake.Game
             return true;
         }
 
-        private void OnPressKey(char key)
+        private void OnPressKey(ConsoleKey key)
             => Key = key;
 
-        private char GetKey()
+        private ConsoleKey GetKey()
         {
             bool isLoop = true;
-            char myKey = ' ';
+            ConsoleKey myKey = ConsoleKey.A;
             do
             {
                 if (isNewKey)

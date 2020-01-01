@@ -111,20 +111,20 @@ namespace Snake.Game
                     SnakeBody[i].position = SnakeBody[i - 1].position;
         }
 
-        private void OnPressKey(char key)
+        private void OnPressKey(ConsoleKey key)
         {
             switch (key)
             {
-                case 'w':
+                case ConsoleKey.W:
                     direction = Direction.Up;
                     break;
-                case 's':
+                case ConsoleKey.S:
                     direction = Direction.Down;
                     break;
-                case 'a':
+                case ConsoleKey.A:
                     direction = Direction.Left;
                     break;
-                case 'd':
+                case ConsoleKey.D:
                     direction = Direction.Right;
                     break;
             }
