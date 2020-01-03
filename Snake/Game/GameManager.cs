@@ -12,17 +12,16 @@ namespace Snake.Game
     public class GameManager
     {
         public int RefreshTime { get; set; } = 50;
+        public string name { get; private set; } = "";
+        public bool waitForPlayerName { get; set; } = false;
 
         private readonly int offsetLeftWall = 0;
         private readonly int offsetRightWall = 1;
         private readonly int offsetUpWall = 0;
         private readonly int offsetDownWall = 2;
-        private bool isRunning = true;
         private readonly Snake snake = new Snake();
         private readonly ConsoleRender render = new ConsoleRender();
         private static List<Object> objects = new List<Object>();
-        private string name = "";
-        private bool waitForPlayerName = false;
 
         public void Start()
         {
@@ -34,6 +33,7 @@ namespace Snake.Game
 
         private void Loop()
         {
+            bool isRunning = true;
             do
             {
                 if (FindObject("apple") == null)
@@ -51,31 +51,19 @@ namespace Snake.Game
         private void GameOver()
         {
             int scores = snake.Scores;
-            GameOverLoop(scores);
+            GameOverGetName(scores);
             GameOverDispose();
             Score score = new Score(scores, name);
             VeryficationScore(score);
         }
 
-        private void GameOverLoop(int scores)
+        private void GameOverGetName(int scores)
         {
             KeyboardControl.PressKeyEvent += OnPressKey;
             KeyboardControl.KeyboardCloseEvent += OnClosingKeyboard;
 
-            string text = "GameOver, you scores " + scores;
-            ConsoleConfiguration console = new ConsoleConfiguration();
-            waitForPlayerName = true;
-            string nameRender = "";
-            do
-            {
-                if (name != nameRender)
-                {
-                    nameRender = name;
-                    render.Clear();
-                    render.Write(text, console.widht / 2 - text.Length / 2, console.height / 2);
-                    render.Write(nameRender, console.widht / 2 - nameRender.Length / 2, console.height / 2 + 2);
-                }
-            } while (waitForPlayerName);
+            Menu menu = new Menu(this);
+            menu.GameoverMenu(scores);
 
             KeyboardControl.PressKeyEvent -= OnPressKey;
             KeyboardControl.KeyboardCloseEvent -= OnClosingKeyboard;
@@ -88,6 +76,10 @@ namespace Snake.Game
             Object apple = FindObject("apple");
             if (apple != null)
                 apple.Destroy();
+
+            for (int i = 0; i < objects.Count; i++)
+                objects[i].Destroy();
+            objects = new List<Object>();
         }
 
         private void VeryficationScore(Score score)
@@ -203,10 +195,11 @@ namespace Snake.Game
                     case ConsoleKey.Enter:
                             waitForPlayerName = false;
                             break;
-                    case ConsoleKey.Insert:
-                        name = name.Remove(0, name.Length);
-                        break;
                     case ConsoleKey.Backspace:
+                        if(name.Length > 0)
+                            name = name.Remove(name.Length-1, 1);
+                            break;
+                    case ConsoleKey.Spacebar:
                         if(name.Length < 11)
                             name += " ";
                         break;

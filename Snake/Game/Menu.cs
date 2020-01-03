@@ -234,5 +234,23 @@ namespace Snake.Game
             KeyboardControl.Close();
             Environment.Exit(0);
         }
+
+        public void GameoverMenu(int scores)
+        {
+            string text = "GameOver, you scores " + scores;
+            ConsoleConfiguration console = new ConsoleConfiguration();
+            game.waitForPlayerName = true;
+            string nameRender = "";
+            do
+            {
+                if (game.name != nameRender)
+                {
+                    nameRender = game.name;
+                    render.Clear();
+                    render.Write(text, console.widht / 2 - text.Length / 2, console.height / 2);
+                    render.Write(nameRender, console.widht / 2 - nameRender.Length / 2, console.height / 2 + 2);
+                }
+            } while (game.waitForPlayerName);
+        }
     }
 }

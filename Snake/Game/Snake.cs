@@ -27,6 +27,7 @@ namespace Snake.Game
             previousDirection = Direction.Up;
             for (int i=0; i<SnakeBody.Count; i++)
                 SnakeBody[i].Destroy();
+            SnakeBody = new List<Object>();
             OnCloseKeyboard();
         }
 

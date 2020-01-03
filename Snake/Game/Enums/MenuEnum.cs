@@ -4,6 +4,6 @@
     {
         MainMenu,
         Levels,
-        Scores
+        Scores,
     }
 }
