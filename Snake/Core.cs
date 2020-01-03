@@ -15,7 +15,7 @@ namespace Snake
         public void Start()
         {
             Veryfications();
-
+            KeyboardControl.Start();
             menu = new Menu(game);
             Loop();
             KeyboardControl.Close();

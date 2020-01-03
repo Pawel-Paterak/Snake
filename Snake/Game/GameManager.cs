@@ -198,7 +198,7 @@ namespace Snake.Game
                     case ConsoleKey.Backspace:
                         if(name.Length > 0)
                             name = name.Remove(name.Length-1, 1);
-                            break;
+                        break;
                     case ConsoleKey.Spacebar:
                         if(name.Length < 11)
                             name += " ";

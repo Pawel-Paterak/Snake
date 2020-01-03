@@ -5,6 +5,7 @@ using Snake.Files.Json;
 using Snake.Game.Enums;
 using Snake.Game.Render;
 using System;
+using System.Threading;
 
 namespace Snake.Game
 {
@@ -14,53 +15,71 @@ namespace Snake.Game
 
         private readonly GameManager game;
         private readonly ConsoleRender render = new ConsoleRender();
-        private readonly Func<ConsoleKey> getKey;
-        private bool isNewKey = false;
-        private ConsoleKey Key { get => key;
-            set
-            {
-                key = value;
-                isNewKey = true;
-            }
-        }
-        private ConsoleKey key;
+        private int optionChoose {
+            get => _optionChoose;
+            set {
+                _optionChoose = value;
+                menuRender?.Invoke();
+            } }
+        private int _optionChoose = 0;
+        private int countOptionChoose;
+        private Action menuRender;
+        private Action goInteractionMenu;
+        private bool IsRenderCanvas { get; set; } = false;
 
         public Menu(GameManager game)
         {
             this.game = game;
-            KeyboardControl.Start();
-            getKey = GetKey;
         }
 
         public void RenderCanvas()
         {
             KeyboardControl.PressKeyEvent += OnPressKey;
 
-            bool isLoop = true;
+            IsRenderCanvas = true;
+            MenuEnum lastMenu = MenuEnum.Scores;
             do
             {
                 switch (Canvas)
                 {
                     case MenuEnum.MainMenu:
                         {
-                            MainMenuRender();
-                            isLoop = !MainMenu(getKey());
+                            if (lastMenu != MenuEnum.MainMenu)
+                            {
+                                countOptionChoose = 4;
+                                MainMenuRender();
+                                lastMenu = Canvas;
+                            }
+                            menuRender = MainMenuRender;
+                            goInteractionMenu = MainMenu;
                             break;
                         }
                     case MenuEnum.Levels:
                         {
-                            LevelsMenuRender();
-                            isLoop = !LevelsMenu(getKey());
+                            if (lastMenu != MenuEnum.Levels)
+                            {
+                                countOptionChoose = 4;
+                                LevelsMenuRender();
+                                lastMenu = Canvas;
+                            }
+                            menuRender = LevelsMenuRender;
+                            goInteractionMenu = LevelsMenu;
                             break;
                         }
                     case MenuEnum.Scores:
                         {
-                            ScoresMenuRender();
-                            isLoop = !ScoresMenu(getKey());
+                            if (lastMenu != MenuEnum.Scores)
+                            {
+                                countOptionChoose = 1;
+                                ScoresMenuRender();
+                                lastMenu = Canvas;
+                            }
+                            menuRender = ScoresMenuRender;
+                            goInteractionMenu = ScoresMenu;
                             break;
                         }
                 }
-            } while (isLoop);
+            } while (IsRenderCanvas);
             KeyboardControl.PressKeyEvent -= OnPressKey;
         }
 
@@ -69,17 +88,23 @@ namespace Snake.Game
             render.Clear();
             ConsoleConfiguration console = new ConsoleConfiguration();
             Frame();
-            int offsetXText = 5;
+            string[] options = new string[4];
+            options[0] = "Start";
+            options[1] = "Multiplayer(disable)";
+            options[2] = "Scores";
+            options[3] = "Exit";
+
             int widht = console.widht / 2;
-            int height = console.height / 2;
-            string text = "1) Start";
-            render.Write(text, widht - offsetXText, height - 3);
-            text = "2) Multiplayer(disable)";
-            render.Write(text, widht- offsetXText, height-1);
-            text = "3) Scores";
-            render.Write(text, widht - offsetXText, height+1);
-            text = "4) Exit";
-            render.Write(text, widht - offsetXText, height+3);
+            int height = console.height / 2 - options.Length/2;
+
+            for (int i=0; i< options.Length; i++)
+            {
+                string text = options[i];
+                if(i == optionChoose)
+                    text = "> "+text+" <";
+                int offsetXText = text.Length / 2;
+                render.Write(text, widht - offsetXText, height + 2*i);
+            }
         }
 
         private void Frame()
@@ -98,28 +123,28 @@ namespace Snake.Game
             }
         }
 
-        private bool MainMenu(ConsoleKey key)
+        private void MainMenu()
         {
-            switch(key)
+            switch (optionChoose)
             {
-                case ConsoleKey.D1:
+                case 0:
                     {
                         Canvas = MenuEnum.Levels;
-                        return false;
+                        break;
                     }
-                case ConsoleKey.D3:
+                case 2:
                     {
                         Canvas = MenuEnum.Scores;
-                        return false;
+                        break;
                     }
-                case ConsoleKey.D4:
+                case 3:
                     {
                         CloseConsole();
-                        return true;
+                        break;
                     }
                 default:
                     {
-                        return false;
+                        break;
                     }
             }
         }
@@ -129,49 +154,57 @@ namespace Snake.Game
             render.Clear();
             ConsoleConfiguration console = new ConsoleConfiguration();
             Frame();
-            int offsetXText = 5;
+            string[] options = new string[4];
+            options[0] = "Easy";
+            options[1] = "Medium";
+            options[2] = "Hard";
+            options[3] = "Back";
+
             int widht = console.widht / 2;
-            int height = console.height / 2;
-            string text = "1) Easy";
-            render.Write(text, widht - offsetXText, height - 3);
-            text = "2) Medium";
-            render.Write(text, widht - offsetXText, height - 1);
-            text = "3) Hard";
-            render.Write(text, widht - offsetXText, height + 1);
-            text = "4) Back";
-            render.Write(text, widht - offsetXText, height + 3);
+            int height = console.height / 2 - options.Length / 2;
+
+            for (int i = 0; i < options.Length; i++)
+            {
+                string text = options[i];
+                if (i == optionChoose)
+                    text = "> " + text + " <";
+                int offsetXText = text.Length / 2;
+                render.Write(text, widht - offsetXText, height + 2 * i);
+            }
         }
 
-        private bool LevelsMenu(ConsoleKey key)
+        private void LevelsMenu()
         {
-            switch (key)
+            switch (optionChoose)
             {
-                case ConsoleKey.D1:
+                case 0:
                     {
                         game.RefreshTime = 100;
+                        IsRenderCanvas = false;
                         break;
                     }
-                case ConsoleKey.D2:
+                case 1:
                     {
                         game.RefreshTime = 60;
+                        IsRenderCanvas = false;
                         break;
                     }
-                case ConsoleKey.D3:
+                case 2:
                     {
                         game.RefreshTime = 30;
+                        IsRenderCanvas = false;
                         break;
                     }
-                case ConsoleKey.D4:
+                case 3:
                     {
                         Canvas = MenuEnum.MainMenu;
-                        return false;
+                        break;
                     }
                 default:
                     {
-                        return false;
+                        break;
                     }
             }
-            return true;
         }
 
         private void ScoresMenuRender()
@@ -189,48 +222,44 @@ namespace Snake.Game
                 render.Write(text, 2, 2+2*i);
             }
 
-            render.Write("1) back", 2, 36);
+            render.Write("> back <", 2, 36);
         }
 
-        private bool ScoresMenu(ConsoleKey key)
+        private void ScoresMenu()
         {
-            switch (key)
+            switch (optionChoose)
             {
-                case ConsoleKey.D1:
+                case 0:
                     {
                         Canvas = MenuEnum.MainMenu;
-                        return false;
+                        break;
                     }
                 default:
                     {
-                        return false;
+                        break;
                     }
             }
-            return true;
         }
 
         private void OnPressKey(ConsoleKey key)
-            => Key = key;
-
-        private ConsoleKey GetKey()
         {
-            bool isLoop = true;
-            ConsoleKey myKey = ConsoleKey.A;
-            do
-            {
-                if (isNewKey)
-                {
-                    isLoop = false;
-                    isNewKey = false;
-                    myKey = Key;
-                }
+            if (key == ConsoleKey.W || key == ConsoleKey.UpArrow)
+                optionChoose--;
+            if (key == ConsoleKey.S || key == ConsoleKey.DownArrow)
+                optionChoose++;
 
-            } while (isLoop);
-            return myKey;
+            if (optionChoose < 0)
+                optionChoose = countOptionChoose-1;
+            else if (optionChoose >= countOptionChoose)
+                optionChoose = 0;
+
+            if (key == ConsoleKey.Enter)
+                goInteractionMenu?.Invoke();
         }
 
         private void CloseConsole()
         {
+            IsRenderCanvas = false;
             KeyboardControl.Close();
             Environment.Exit(0);
         }
