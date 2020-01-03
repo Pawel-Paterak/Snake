@@ -1,5 +1,7 @@
 ﻿using Snake.Configurations;
 using Snake.Controlers;
+using Snake.Files;
+using Snake.Files.Json;
 using Snake.Game.Enums;
 using Snake.Game.Render;
 using System;
@@ -177,9 +179,14 @@ namespace Snake.Game
             render.Clear();
             ConsoleConfiguration console = new ConsoleConfiguration();
             Frame();
-            for(int i=0; i<17; i++)
+            JsonManager json = new JsonManager();
+            ScoresFile scoresFile = json.Read<ScoresFile>("scores.json");
+            for (int i=0; i<17; i++)
             {
-                render.Write((i + 1) + ": ", 2, 2+2*i);
+                string text = (i + 1) + ": ";
+                if (scoresFile != null && i < scoresFile.Scores.Count)
+                    text += scoresFile.Scores[i].Name + " " + scoresFile.Scores[i].Scores;
+                render.Write(text, 2, 2+2*i);
             }
 
             render.Write("1) back", 2, 36);

@@ -1,8 +1,9 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace Snake.File.Json
+namespace Snake.Files.Json
 {
     class JsonManager
     {
@@ -11,10 +12,16 @@ namespace Snake.File.Json
             JsonSerializer serializer = new JsonSerializer();
             serializer.Converters.Add(new JavaScriptDateTimeConverter());
             serializer.NullValueHandling = NullValueHandling.Ignore;
-
-            using (StreamWriter sw = new StreamWriter(path))
+            try
+            {
+                using (StreamWriter sw = new StreamWriter(path))
                 using (JsonWriter writer = new JsonTextWriter(sw))
                     serializer.Serialize(writer, obj);
+            }
+            catch (Exception e)
+            {
+
+            }
         }
 
         public T Read<T>(string path)
@@ -24,13 +31,20 @@ namespace Snake.File.Json
             serializer.Converters.Add(new JavaScriptDateTimeConverter());
             serializer.NullValueHandling = NullValueHandling.Ignore;
 
-            using (StreamReader sw = new StreamReader(path))
+            try
+            {
+                using (StreamReader sw = new StreamReader(path))
                 using (JsonReader reader = new JsonTextReader(sw))
                     temp = (T)serializer.Deserialize(reader, typeof(T));
+            }
+            catch(Exception e)
+            {
+
+            }
             return temp;
         }
 
         public bool Exists(string path)
-         => Directory.Exists(path);
+         => File.Exists(path);
     }
 }

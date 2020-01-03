@@ -2,8 +2,8 @@
 using Snake.Controlers;
 using Snake.Game;
 using Snake.Game.Enums;
-using Snake.File.Json;
-using Snake.File;
+using Snake.Files.Json;
+using Snake.Files;
 
 namespace Snake
 {

@@ -22,7 +22,10 @@ namespace Snake.Game
 
         public void Close()
         {
-            for(int i=0; i<SnakeBody.Count; i++)
+            Scores = 0;
+            direction = Direction.Up;
+            previousDirection = Direction.Up;
+            for (int i=0; i<SnakeBody.Count; i++)
                 SnakeBody[i].Destroy();
             OnCloseKeyboard();
         }

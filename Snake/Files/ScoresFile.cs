@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Snake.File
+namespace Snake.Files
 {
     public class ScoresFile
     {

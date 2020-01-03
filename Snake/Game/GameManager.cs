@@ -1,4 +1,7 @@
 ﻿using Snake.Configurations;
+using Snake.Controlers;
+using Snake.Files;
+using Snake.Files.Json;
 using Snake.Game.Render;
 using System;
 using System.Collections.Generic;
@@ -18,9 +21,12 @@ namespace Snake.Game
         private readonly Snake snake = new Snake();
         private readonly ConsoleRender render = new ConsoleRender();
         private static List<Object> objects = new List<Object>();
+        private string name = "";
+        private bool waitForPlayerName = false;
 
         public void Start()
         {
+            name = "";
             snake.Start();
             AddWalls();
             Loop();
@@ -44,10 +50,90 @@ namespace Snake.Game
 
         private void GameOver()
         {
+            int scores = snake.Scores;
+            GameOverLoop(scores);
+            GameOverDispose();
+            Score score = new Score(scores, name);
+            VeryficationScore(score);
+        }
+
+        private void GameOverLoop(int scores)
+        {
+            KeyboardControl.PressKeyEvent += OnPressKey;
+            KeyboardControl.KeyboardCloseEvent += OnClosingKeyboard;
+
+            string text = "GameOver, you scores " + scores;
             ConsoleConfiguration console = new ConsoleConfiguration();
-            string text = "GameOver, you scores " + snake.Scores;
-            render.Write(text, console.widht / 2 - text.Length / 2, console.height / 2);
-            Console.ReadKey();
+            waitForPlayerName = true;
+            string nameRender = "";
+            do
+            {
+                if (name != nameRender)
+                {
+                    nameRender = name;
+                    render.Clear();
+                    render.Write(text, console.widht / 2 - text.Length / 2, console.height / 2);
+                    render.Write(nameRender, console.widht / 2 - nameRender.Length / 2, console.height / 2 + 2);
+                }
+            } while (waitForPlayerName);
+
+            KeyboardControl.PressKeyEvent -= OnPressKey;
+            KeyboardControl.KeyboardCloseEvent -= OnClosingKeyboard;
+        }
+
+        private void GameOverDispose()
+        {
+            snake.Close();
+
+            Object apple = FindObject("apple");
+            if (apple != null)
+                apple.Destroy();
+        }
+
+        private void VeryficationScore(Score score)
+        {
+            JsonManager json = new JsonManager();
+            ScoresFile scoresFile = json.Read<ScoresFile>("scores.json");
+            if (scoresFile != null)
+            {
+                int countScores = 17;
+                int missingScore = countScores - scoresFile.Scores.Count;
+                if (missingScore > 0)
+                {
+                    for (int i = 0; i < missingScore; i++)
+                        scoresFile.Scores.Add(new Score(0, ""));
+                }
+
+                for (int i = countScores - 1; i >= 0; i--)
+                {
+                    if (i == 0 && scoresFile.Scores[i].Scores < score.Scores)
+                    {
+                        AddScoreToScores(score, i);
+                        return;
+                    }
+                    else if (i != countScores - 1 && scoresFile.Scores[i].Scores >= score.Scores)
+                    {
+                        AddScoreToScores(score, i + 1);
+                        return;
+                    }
+                }
+            }
+        }
+
+        private void AddScoreToScores(Score score, int index)
+        {
+            JsonManager json = new JsonManager();
+            ScoresFile scoresFile = json.Read<ScoresFile>("scores.json");
+            if (scoresFile != null)
+            {
+                int countScores = scoresFile.Scores.Count;
+                for (int i = countScores - 1; i > index; i--)
+                        scoresFile.Scores[i] = scoresFile.Scores[i - 1];
+
+                if(scoresFile.Scores[index].Scores != score.Scores)
+                    scoresFile.Scores[index] = score;
+                json.Write("scores.json", scoresFile);
+            }
         }
 
         private void AddWalls()
@@ -106,6 +192,38 @@ namespace Snake.Game
                 if (coor.name == name)
                     objs.Add(coor);
             return objs.ToArray();
+        }
+
+        private void OnPressKey(ConsoleKey key)
+        {
+            if (waitForPlayerName)
+            {
+                switch(key)
+                {
+                    case ConsoleKey.Enter:
+                            waitForPlayerName = false;
+                            break;
+                    case ConsoleKey.Insert:
+                        name = name.Remove(0, name.Length);
+                        break;
+                    case ConsoleKey.Backspace:
+                        if(name.Length < 11)
+                            name += " ";
+                        break;
+                    default:
+                        {
+                            if(name.Length < 11 && key.ToString().Length < 2)
+                                name += key.ToString();
+                            break;
+                        }
+                }
+            }
+        }
+
+        private void OnClosingKeyboard()
+        {
+            KeyboardControl.PressKeyEvent -= OnPressKey;
+            KeyboardControl.KeyboardCloseEvent -= OnClosingKeyboard;
         }
 
         public static Object GetObject(Vector2D position)
