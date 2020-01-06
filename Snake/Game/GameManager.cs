@@ -14,19 +14,19 @@ namespace Snake.Game
         public int RefreshTime { get; set; } = 50;
         public string name { get; private set; } = "";
         public bool waitForPlayerName { get; set; } = false;
+        public Snake Snake { get; private set; } = new Snake();
 
         private readonly int offsetLeftWall = 0;
         private readonly int offsetRightWall = 1;
         private readonly int offsetUpWall = 0;
         private readonly int offsetDownWall = 2;
-        private readonly Snake snake = new Snake();
         private readonly ConsoleRender render = new ConsoleRender();
         private static List<Object> objects = new List<Object>();
 
         public void Start()
         {
             name = "";
-            snake.Start();
+            Snake.Start();
             AddWalls();
             Loop();
         }
@@ -38,7 +38,7 @@ namespace Snake.Game
             {
                 if (FindObject("apple") == null)
                     GenerateApple();
-                bool isMove = snake.Move();
+                bool isMove = Snake.Move();
                 if(!isMove)
                     isRunning = false;
                 Render();
@@ -50,7 +50,7 @@ namespace Snake.Game
 
         private void GameOver()
         {
-            int scores = snake.Scores;
+            int scores = Snake.Scores;
             GameOverGetName(scores);
             GameOverDispose();
             Score score = new Score(scores, name);
@@ -71,7 +71,7 @@ namespace Snake.Game
 
         private void GameOverDispose()
         {
-            snake.Close();
+            Snake.Close();
 
             Object apple = FindObject("apple");
             if (apple != null)

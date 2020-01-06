@@ -1,6 +1,7 @@
 ﻿using System;
 using Snake.Controlers;
 using System.Collections.Generic;
+using Snake.Game.Enums;
 
 namespace Snake.Game
 {
@@ -8,13 +9,16 @@ namespace Snake.Game
     {
         public List<Object> SnakeBody { get; private set; } = new List<Object>();
         public int Scores { get; private set; }
+        public DifficultiGame difficulti { get; set; } = DifficultiGame.Easy;
+        public ConsoleColor ColorSnake { get; set; } = ConsoleColor.White;
+        public char SkinSnake { get; set; } = '@';
 
         private Direction direction = Direction.Up;
         private Direction previousDirection = Direction.Up;
 
         public void Start()
         {
-            SnakeBody.Add(new Object("Head", new Vector2D(20, 20), '@', ConsoleColor.White, true));
+            SnakeBody.Add(new Object("Head", new Vector2D(20, 20), SkinSnake, ColorSnake, true));
             KeyboardControl.Start();
             KeyboardControl.PressKeyEvent += OnPressKey;
             KeyboardControl.KeyboardCloseEvent += OnCloseKeyboard;
@@ -25,6 +29,9 @@ namespace Snake.Game
             Scores = 0;
             direction = Direction.Up;
             previousDirection = Direction.Up;
+            difficulti = DifficultiGame.Easy;
+            ColorSnake = ConsoleColor.White;
+            SkinSnake = '@';
             for (int i=0; i<SnakeBody.Count; i++)
                 SnakeBody[i].Destroy();
             SnakeBody = new List<Object>();
@@ -94,7 +101,12 @@ namespace Snake.Game
                         {
                             obj.Destroy();
                             AddBody();
-                            Scores += 10;
+                            if (difficulti == DifficultiGame.Easy)
+                                Scores += 5;
+                            else if (difficulti == DifficultiGame.Medium)
+                                Scores += 10;
+                            else
+                                Scores += 15;
                             break;
                         }
                 }
@@ -105,7 +117,7 @@ namespace Snake.Game
 
         private void AddBody()
         {
-            SnakeBody.Add(new Object("Body"+(SnakeBody.Count-1), new Vector2D(20, 20), '@', ConsoleColor.White, true));
+            SnakeBody.Add(new Object("Body"+(SnakeBody.Count-1), new Vector2D(20, 20), SkinSnake, ColorSnake, true));
         }
 
         private void MoveBody()

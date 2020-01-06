@@ -5,5 +5,6 @@
         MainMenu,
         Levels,
         Scores,
+        CustomsSnake
     }
 }

@@ -52,6 +52,7 @@
     <Compile Include="Direction.cs" />
     <Compile Include="Files\Json\JsonManager.cs" />
     <Compile Include="Files\ScoresFile.cs" />
+    <Compile Include="Game\Enums\DifficultiGame.cs" />
     <Compile Include="Game\Enums\MenuEnum.cs" />
     <Compile Include="Game\GameManager.cs" />
     <Compile Include="Game\Menu.cs" />

@@ -5,7 +5,6 @@ using Snake.Files.Json;
 using Snake.Game.Enums;
 using Snake.Game.Render;
 using System;
-using System.Threading;
 
 namespace Snake.Game
 {
@@ -15,21 +14,63 @@ namespace Snake.Game
 
         private readonly GameManager game;
         private readonly ConsoleRender render = new ConsoleRender();
-        private int optionChoose {
+        private int OptionChoose {
             get => _optionChoose;
             set {
                 _optionChoose = value;
                 menuRender?.Invoke();
             } }
         private int _optionChoose = 0;
+        private int OptionChooseColor
+        {
+            get => _optionChooseColor;
+            set
+            {
+                _optionChooseColor = value;
+                menuRender?.Invoke();
+            }
+        }
+        private int _optionChooseColor = 0;
+        private int OptionChooseSkin
+        {
+            get => _optionChooseSkin;
+            set
+            {
+                _optionChooseSkin = value;
+                menuRender?.Invoke();
+            }
+        }
+        private int _optionChooseSkin = 0;
         private int countOptionChoose;
         private Action menuRender;
         private Action goInteractionMenu;
+        private ConsoleColor[] colorsSnake;
+        private char[] skinsSnake;
         private bool IsRenderCanvas { get; set; } = false;
 
         public Menu(GameManager game)
         {
             this.game = game;
+
+            colorsSnake = new ConsoleColor[8];
+            colorsSnake[0] = ConsoleColor.White;
+            colorsSnake[1] = ConsoleColor.Cyan;
+            colorsSnake[2] = ConsoleColor.Gray;
+            colorsSnake[3] = ConsoleColor.Red;
+            colorsSnake[4] = ConsoleColor.Yellow;
+            colorsSnake[5] = ConsoleColor.Green;
+            colorsSnake[6] = ConsoleColor.Blue;
+            colorsSnake[7] = ConsoleColor.Magenta;
+
+            skinsSnake = new char[8];
+            skinsSnake[0] = '@';
+            skinsSnake[1] = '#';
+            skinsSnake[2] = '$';
+            skinsSnake[3] = '%';
+            skinsSnake[4] = 'o';
+            skinsSnake[5] = 'm';
+            skinsSnake[6] = 'x';
+            skinsSnake[7] = 'a';
         }
 
         public void RenderCanvas()
@@ -66,6 +107,18 @@ namespace Snake.Game
                             goInteractionMenu = LevelsMenu;
                             break;
                         }
+                    case MenuEnum.CustomsSnake:
+                        {
+                            if (lastMenu != MenuEnum.CustomsSnake)
+                            {
+                                countOptionChoose = 4;
+                                CustomsSnakeMenuRender();
+                                lastMenu = Canvas;
+                            }
+                            menuRender = CustomsSnakeMenuRender;
+                            goInteractionMenu = CustomsSnakeMenu;
+                            break;
+                        }
                     case MenuEnum.Scores:
                         {
                             if (lastMenu != MenuEnum.Scores)
@@ -100,7 +153,7 @@ namespace Snake.Game
             for (int i=0; i< options.Length; i++)
             {
                 string text = options[i];
-                if(i == optionChoose)
+                if(i == OptionChoose)
                     text = "> "+text+" <";
                 int offsetXText = text.Length / 2;
                 render.Write(text, widht - offsetXText, height + 2*i);
@@ -125,11 +178,11 @@ namespace Snake.Game
 
         private void MainMenu()
         {
-            switch (optionChoose)
+            switch (OptionChoose)
             {
                 case 0:
                     {
-                        Canvas = MenuEnum.Levels;
+                        Canvas = MenuEnum.CustomsSnake;
                         break;
                     }
                 case 2:
@@ -166,7 +219,7 @@ namespace Snake.Game
             for (int i = 0; i < options.Length; i++)
             {
                 string text = options[i];
-                if (i == optionChoose)
+                if (i == OptionChoose)
                     text = "> " + text + " <";
                 int offsetXText = text.Length / 2;
                 render.Write(text, widht - offsetXText, height + 2 * i);
@@ -175,24 +228,122 @@ namespace Snake.Game
 
         private void LevelsMenu()
         {
-            switch (optionChoose)
+            switch (OptionChoose)
             {
                 case 0:
                     {
+                        game.Snake.difficulti = DifficultiGame.Easy;
                         game.RefreshTime = 100;
                         IsRenderCanvas = false;
                         break;
                     }
                 case 1:
                     {
+                        game.Snake.difficulti = DifficultiGame.Medium;
                         game.RefreshTime = 60;
                         IsRenderCanvas = false;
                         break;
                     }
                 case 2:
                     {
+                        game.Snake.difficulti = DifficultiGame.Hard;
                         game.RefreshTime = 30;
                         IsRenderCanvas = false;
+                        break;
+                    }
+                case 3:
+                    {
+                        Canvas = MenuEnum.CustomsSnake;
+                        break;
+                    }
+                default:
+                    {
+                        break;
+                    }
+            }
+        }
+
+        private void CustomsSnakeMenuRender()
+        {
+            render.Clear();
+            ConsoleConfiguration console = new ConsoleConfiguration();
+            Frame();
+            string[] options = new string[4];
+            options[0] = "Color";
+            options[1] = "Skin";
+            options[2] = "Play";
+            options[3] = "Back";
+            int widht = console.widht / 2;
+            int height = console.height / 2 - (options.Length+2) / 2;
+
+            for (int i = 0; i < options.Length; i++)
+            {
+                string text = options[i];
+                if (OptionChoose == i && i != 0 && i != 1)
+                    text = "> " + text + " <";
+
+                if (OptionChoose != 0 && i == 0)
+                    text += " " + colorsSnake[OptionChooseColor];
+
+                if (OptionChoose != 1 && i == 1)
+                    text += " " + skinsSnake[OptionChooseSkin];
+
+                int offsetXText = text.Length / 2;
+                render.Write(text, widht - offsetXText, height + 2*i);
+
+                if (OptionChoose == 0 && i == 0)
+                {
+                    int index = OptionChooseColor - 1;
+                    if (index < 0)
+                        index = colorsSnake.Length-1;
+                    text = colorsSnake[index] + " ";
+
+                    index = OptionChooseColor;
+                    if (index < 0 || index > colorsSnake.Length - 1)
+                        index = 0;
+                    text += "> "+colorsSnake[index] + " < ";
+
+                    index = OptionChooseColor + 1;
+                    if (index > colorsSnake.Length - 1)
+                        index = 0;
+                    text += colorsSnake[index];
+
+                    offsetXText = text.Length / 2;
+                    render.Write(text, widht - offsetXText, height + 2 * i);
+                }
+
+                if (OptionChoose == 1 && i == 1)
+                {
+                    int index = OptionChooseSkin - 1;
+                    if (index < 0)
+                        index = skinsSnake.Length - 1;
+                    text = skinsSnake[index] + " ";
+
+                    index = OptionChooseSkin;
+                    if (index < 0 || index > skinsSnake.Length - 1)
+                        index = 0;
+                    text += "> "+skinsSnake[index] + " < ";
+
+                    index = OptionChooseSkin + 1;
+                    if (index > skinsSnake.Length - 1)
+                        index = 0;
+                    text += skinsSnake[index];
+
+                    offsetXText = text.Length / 2;
+                    render.Write(text, widht - offsetXText, height + 2 * i);
+                }
+            }
+        }
+
+        private void CustomsSnakeMenu()
+        {
+            switch (OptionChoose)
+            {
+                case 2:
+                    {
+                        game.Snake.ColorSnake = colorsSnake[OptionChooseColor];
+                        game.Snake.SkinSnake = skinsSnake[OptionChooseSkin];
+                        Canvas = MenuEnum.Levels;
                         break;
                     }
                 case 3:
@@ -227,7 +378,7 @@ namespace Snake.Game
 
         private void ScoresMenu()
         {
-            switch (optionChoose)
+            switch (OptionChoose)
             {
                 case 0:
                     {
@@ -244,14 +395,42 @@ namespace Snake.Game
         private void OnPressKey(ConsoleKey key)
         {
             if (key == ConsoleKey.W || key == ConsoleKey.UpArrow)
-                optionChoose--;
+                OptionChoose--;
             if (key == ConsoleKey.S || key == ConsoleKey.DownArrow)
-                optionChoose++;
+                OptionChoose++;
 
-            if (optionChoose < 0)
-                optionChoose = countOptionChoose-1;
-            else if (optionChoose >= countOptionChoose)
-                optionChoose = 0;
+            if (OptionChoose < 0)
+                OptionChoose = countOptionChoose-1;
+            else if (OptionChoose >= countOptionChoose)
+                OptionChoose = 0;
+
+            if(Canvas == MenuEnum.CustomsSnake)
+            {
+                if (key == ConsoleKey.A || key == ConsoleKey.LeftArrow)
+                {
+                    if (OptionChoose == 0)
+                        OptionChooseColor--;
+                    else if (OptionChoose == 1)
+                        OptionChooseSkin--;
+                }
+                if (key == ConsoleKey.D || key == ConsoleKey.RightArrow)
+                {
+                    if (OptionChoose == 0)
+                        OptionChooseColor++;
+                    else if (OptionChoose == 1)
+                        OptionChooseSkin++;
+                }
+            }
+
+            if (OptionChooseColor < 0)
+                OptionChooseColor = colorsSnake.Length - 1;
+            else if (OptionChooseColor >= colorsSnake.Length)
+                OptionChooseColor = 0;
+
+            if (OptionChooseSkin < 0)
+                OptionChooseSkin = skinsSnake.Length - 1;
+            else if (OptionChooseSkin >= skinsSnake.Length)
+                OptionChooseSkin = 0;
 
             if (key == ConsoleKey.Enter)
                 goInteractionMenu?.Invoke();
