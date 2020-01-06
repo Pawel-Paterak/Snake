@@ -1,19 +1,24 @@
 ﻿using System;
 using Snake.Controlers;
 using System.Collections.Generic;
+using Snake.Game.Enums;
 
 namespace Snake.Game
 {
     public class Snake
     {
         public List<Object> SnakeBody { get; private set; } = new List<Object>();
+        public int Scores { get; private set; }
+        public DifficultiGame difficulti { get; set; } = DifficultiGame.Easy;
+        public ConsoleColor ColorSnake { get; set; } = ConsoleColor.White;
+        public char SkinSnake { get; set; } = '@';
 
         private Direction direction = Direction.Up;
         private Direction previousDirection = Direction.Up;
 
         public void Start()
         {
-            SnakeBody.Add(new Object("Head", new Vector2D(20, 20), '@', ConsoleColor.White, true));
+            SnakeBody.Add(new Object("Head", new Vector2D(20, 20), SkinSnake, ColorSnake, true));
             KeyboardControl.Start();
             KeyboardControl.PressKeyEvent += OnPressKey;
             KeyboardControl.KeyboardCloseEvent += OnCloseKeyboard;
@@ -21,9 +26,16 @@ namespace Snake.Game
 
         public void Close()
         {
-            for(int i=0; i<SnakeBody.Count; i++)
+            Scores = 0;
+            direction = Direction.Up;
+            previousDirection = Direction.Up;
+            difficulti = DifficultiGame.Easy;
+            ColorSnake = ConsoleColor.White;
+            SkinSnake = '@';
+            for (int i=0; i<SnakeBody.Count; i++)
                 SnakeBody[i].Destroy();
-            OnCloseKeyboard(true);
+            SnakeBody = new List<Object>();
+            OnCloseKeyboard();
         }
 
         public bool Move()
@@ -89,6 +101,12 @@ namespace Snake.Game
                         {
                             obj.Destroy();
                             AddBody();
+                            if (difficulti == DifficultiGame.Easy)
+                                Scores += 5;
+                            else if (difficulti == DifficultiGame.Medium)
+                                Scores += 10;
+                            else
+                                Scores += 15;
                             break;
                         }
                 }
@@ -99,7 +117,7 @@ namespace Snake.Game
 
         private void AddBody()
         {
-            SnakeBody.Add(new Object("Body"+(SnakeBody.Count-1), new Vector2D(20, 20), '@', ConsoleColor.White, true));
+            SnakeBody.Add(new Object("Body"+(SnakeBody.Count-1), new Vector2D(20, 20), SkinSnake, ColorSnake, true));
         }
 
         private void MoveBody()
@@ -109,26 +127,26 @@ namespace Snake.Game
                     SnakeBody[i].position = SnakeBody[i - 1].position;
         }
 
-        private void OnPressKey(char key)
+        private void OnPressKey(ConsoleKey key)
         {
             switch (key)
             {
-                case 'w':
+                case ConsoleKey.W:
                     direction = Direction.Up;
                     break;
-                case 's':
+                case ConsoleKey.S:
                     direction = Direction.Down;
                     break;
-                case 'a':
+                case ConsoleKey.A:
                     direction = Direction.Left;
                     break;
-                case 'd':
+                case ConsoleKey.D:
                     direction = Direction.Right;
                     break;
             }
         }
 
-        private void OnCloseKeyboard(bool closing)
+        private void OnCloseKeyboard()
         {
             KeyboardControl.PressKeyEvent -= OnPressKey;
             KeyboardControl.KeyboardCloseEvent -= OnCloseKeyboard;

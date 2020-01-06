@@ -5,8 +5,8 @@ namespace Snake.Controlers
 {
     public static class KeyboardControl
     {
-        public static Action<char> PressKeyEvent { get; set; }
-        public static Action<bool> KeyboardCloseEvent { get; set; }
+        public static Action<ConsoleKey> PressKeyEvent { get; set; }
+        public static Action KeyboardCloseEvent { get; set; }
 
         private static bool isRunning { get; set; } = false;
         private static Task LoopTask { get; set; }
@@ -26,9 +26,9 @@ namespace Snake.Controlers
             do
             {
                 ConsoleKeyInfo keyInfo = Console.ReadKey(true);
-                PressKeyEvent?.Invoke(keyInfo.KeyChar);
+                PressKeyEvent?.Invoke(keyInfo.Key);
             } while (isRunning);
-            KeyboardCloseEvent?.Invoke(true);
+            KeyboardCloseEvent?.Invoke();
         }
 
         public static void Close()
