@@ -12,8 +12,8 @@ namespace Snake.Game
     public class GameManager
     {
         public int RefreshTime { get; set; } = 50;
-        public string name { get; private set; } = "";
-        public bool waitForPlayerName { get; set; } = false;
+        public string Name { get; private set; } = "";
+        public bool WaitForPlayerName { get; set; } = false;
         public Snake Snake { get; private set; } = new Snake();
 
         private readonly int offsetLeftWall = 0;
@@ -25,7 +25,7 @@ namespace Snake.Game
 
         public void Start()
         {
-            name = "";
+            Name = "";
             Snake.Start();
             AddWalls();
             Loop();
@@ -53,7 +53,7 @@ namespace Snake.Game
             int scores = Snake.Scores;
             GameOverGetName(scores);
             GameOverDispose();
-            Score score = new Score(scores, name);
+            Score score = new Score(scores, Name);
             VeryficationScore(score);
         }
 
@@ -85,7 +85,7 @@ namespace Snake.Game
         private void VeryficationScore(Score score)
         {
             JsonManager json = new JsonManager();
-            ScoresFile scoresFile = json.Read<ScoresFile>("scores.json");
+            ScoresFile scoresFile = json.Read<ScoresFile>(GameConfig.ScoresFile);
             if (scoresFile != null)
             {
                 int countScores = 17;
@@ -115,7 +115,7 @@ namespace Snake.Game
         private void AddScoreToScores(Score score, int index)
         {
             JsonManager json = new JsonManager();
-            ScoresFile scoresFile = json.Read<ScoresFile>("scores.json");
+            ScoresFile scoresFile = json.Read<ScoresFile>(GameConfig.ScoresFile);
             if (scoresFile != null)
             {
                 int countScores = scoresFile.Scores.Count;
@@ -130,83 +130,74 @@ namespace Snake.Game
 
         private void AddWalls()
         {
-            ConsoleConfiguration console = new ConsoleConfiguration();
-            for (int x = 0; x < console.widht; x++)
+            ConsoleConfig console = new ConsoleConfig();
+            for (int x = 0; x < console.Widht; x++)
             {
                 Object wallUp = new Object("Wall", new Vector2D(x, offsetUpWall), '#', ConsoleColor.White, true);
-                Object wallDown = new Object("Wall", new Vector2D(x, console.height - offsetDownWall), '#', ConsoleColor.White, true);
+                Object wallDown = new Object("Wall", new Vector2D(x, console.Height - offsetDownWall), '#', ConsoleColor.White, true);
             }
-            for (int y = 0; y < console.height-1; y++)
+            for (int y = 0; y < console.Height-1; y++)
             {
                 Object wallLeft = new Object("Wall", new Vector2D(offsetLeftWall, y), '#', ConsoleColor.White, true);
-                Object wallRight = new Object("Wall", new Vector2D(console.widht - offsetRightWall, y), '#', ConsoleColor.White, true);
+                Object wallRight = new Object("Wall", new Vector2D(console.Widht - offsetRightWall, y), '#', ConsoleColor.White, true);
             }
         }
 
         private void GenerateApple()
         {
-            ConsoleConfiguration console = new ConsoleConfiguration();
+            ConsoleConfig console = new ConsoleConfig();
             bool isLoop = true;
             Random rnd = new Random();
             int x = 0;
             int y = 0;
             do
             {
-                x = rnd.Next(1, console.widht - 1);
-                y = rnd.Next(1, console.height - 1);
+                x = rnd.Next(1, console.Widht - 1);
+                y = rnd.Next(1, console.Height - 1);
                 if (GetObject(new Vector2D(x, y)) == null)
                     isLoop = false;
             } while (isLoop);
-            new Object("apple", new Vector2D(x, y), '@', ConsoleColor.Red, false);
+            Object apple = new Object("apple", new Vector2D(x, y), '@', ConsoleColor.Red, false);
         }
 
         private void Render()
         {
             foreach(Object obj in objects)
             {
-                if(obj.charRender != ' ')
-                    render.Write(obj.charRender+"", obj.color, obj.position.x, obj.position.y);
+                if(obj.CharRender != ' ')
+                    render.Write(obj.CharRender+"", obj.Color, obj.Position.X, obj.Position.Y);
             }
         }
 
         private Object FindObject(string name)
         {
             foreach (Object coor in objects)
-                if (coor.name == name)
+                if (coor.Name == name)
                     return coor;
             return null;
         }
 
-        private Object[] FindObjects(string name)
-        {
-            List<Object> objs = new List<Object>();
-            foreach (Object coor in objects)
-                if (coor.name == name)
-                    objs.Add(coor);
-            return objs.ToArray();
-        }
-
         private void OnPressKey(ConsoleKey key)
         {
-            if (waitForPlayerName)
+            if (WaitForPlayerName)
             {
                 switch(key)
                 {
                     case ConsoleKey.Enter:
-                            waitForPlayerName = false;
+                            WaitForPlayerName = false;
                             break;
                     case ConsoleKey.Backspace:
-                        if(name.Length > 0)
-                            name = name.Remove(name.Length-1, 1);
+                        if(Name.Length > 0)
+                            Name = Name.Remove(Name.Length-1, 1);
                         break;
                     case ConsoleKey.Spacebar:
-                        if(name.Length < 11)
-                            name += " ";
+                        if(Name.Length < 11)
+                            Name += " ";
                         break;
                     default:
                         {
-                            if(name.Length < 11 && key.ToString().Length < 2)
-                                name += key.ToString();
+                            if(Name.Length < 11 && key.ToString().Length < 2)
+                                Name += key.ToString();
                             break;
                         }
                 }
@@ -222,7 +213,7 @@ namespace Snake.Game
         public static Object GetObject(Vector2D position)
         {
             foreach (Object obj in objects)
-                if (obj.position == position)
+                if (obj.Position == position)
                     return obj;
             return null;
         }

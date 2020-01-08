@@ -1,18 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Snake.Game
 {
     public class Object
     {
-        public string name { get; private set; } = "Default";
-        public Vector2D position { get; set; } = new Vector2D(0, 0);
-        public ConsoleColor color { get; private set; } = ConsoleColor.White;
-        public char charRender { get; private set; } = ' ';
-        public bool collision { get; private set; }
+        public string Name { get; private set; } = "Default";
+        public Vector2D Position { get; set; } = new Vector2D(0, 0);
+        public ConsoleColor Color { get; private set; } = ConsoleColor.White;
+        public char CharRender { get; private set; } = ' ';
+        public bool Collision { get; private set; }
 
         public Object()
         {
@@ -21,11 +17,11 @@ namespace Snake.Game
 
         public Object(string name, Vector2D position, char charRender, ConsoleColor color, bool collision)
         {
-            this.name = name;
-            this.position = position;
-            this.charRender = charRender;
-            this.color = color;
-            this.collision = collision;
+            Name = name;
+            Position = position;
+            CharRender = charRender;
+            Color = color;
+            Collision = collision;
             Instantiate();
         }
 

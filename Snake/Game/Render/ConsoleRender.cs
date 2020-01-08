@@ -1,9 +1,5 @@
 ﻿using Snake.Configurations;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Snake.Game.Render
 {
@@ -14,8 +10,8 @@ namespace Snake.Game.Render
 
         public void SetCursor(int x, int y)
         {
-            ConsoleConfiguration consoleConfig = new ConsoleConfiguration();
-            if (x >= 0 && x < consoleConfig.widht && y >= 0 && y < consoleConfig.height)
+            ConsoleConfig consoleConfig = new ConsoleConfig();
+            if (x >= 0 && x < consoleConfig.Widht && y >= 0 && y < consoleConfig.Height)
                 Console.SetCursorPosition(x, y);
         }
 

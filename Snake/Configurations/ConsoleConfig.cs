@@ -2,10 +2,10 @@
 
 namespace Snake.Configurations
 {
-    public class ConsoleConfiguration
+    public class ConsoleConfig
     {
-        public int widht {get; private set;} = 40;
-        public int height { get; private set; } = 40;
+        public int Widht {get; private set;} = 40;
+        public int Height { get; private set; } = 40;
 
         private const string title = "Snake";
         private const bool cursorVisible = false;
@@ -13,7 +13,7 @@ namespace Snake.Configurations
         public void Configuration()
         {
             WindowTitle(title);
-            WindowsSize(widht, height);
+            WindowsSize(Widht, Height);
             CursorVisible(cursorVisible);
         }
 

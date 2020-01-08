@@ -2,6 +2,7 @@
 using System.IO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Snake.Game.Render;
 
 namespace Snake.Files.Json
 {
@@ -20,7 +21,9 @@ namespace Snake.Files.Json
             }
             catch (Exception e)
             {
-
+                ConsoleRender render = new ConsoleRender();
+                render.Write(e.Message, 0, 0);
+                Console.ReadKey();
             }
         }
 
@@ -39,7 +42,9 @@ namespace Snake.Files.Json
             }
             catch(Exception e)
             {
-
+                ConsoleRender render = new ConsoleRender();
+                render.Write(e.Message, 0, 0);
+                Console.ReadKey();
             }
             return temp;
         }

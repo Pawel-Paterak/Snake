@@ -9,7 +9,7 @@ namespace Snake.Game
     {
         public List<Object> SnakeBody { get; private set; } = new List<Object>();
         public int Scores { get; private set; }
-        public DifficultiGame difficulti { get; set; } = DifficultiGame.Easy;
+        public DifficultiGame Difficulti { get; set; } = DifficultiGame.Easy;
         public ConsoleColor ColorSnake { get; set; } = ConsoleColor.White;
         public char SkinSnake { get; set; } = '@';
 
@@ -19,7 +19,6 @@ namespace Snake.Game
         public void Start()
         {
             SnakeBody.Add(new Object("Head", new Vector2D(20, 20), SkinSnake, ColorSnake, true));
-            KeyboardControl.Start();
             KeyboardControl.PressKeyEvent += OnPressKey;
             KeyboardControl.KeyboardCloseEvent += OnCloseKeyboard;
         }
@@ -29,7 +28,7 @@ namespace Snake.Game
             Scores = 0;
             direction = Direction.Up;
             previousDirection = Direction.Up;
-            difficulti = DifficultiGame.Easy;
+            Difficulti = DifficultiGame.Easy;
             ColorSnake = ConsoleColor.White;
             SkinSnake = '@';
             for (int i=0; i<SnakeBody.Count; i++)
@@ -49,7 +48,7 @@ namespace Snake.Game
                 return false;
 
             MoveBody();
-            SnakeBody[0].position += vecDirection;
+            SnakeBody[0].Position += vecDirection;
             previousDirection = direction;
             return true;
         }
@@ -60,16 +59,16 @@ namespace Snake.Game
             switch (direction)
             {
                 case Direction.Up:
-                    vectorDirection.y--;
+                    vectorDirection.Y--;
                     break;
                 case Direction.Down:
-                    vectorDirection.y++;
+                    vectorDirection.Y++;
                     break;
                 case Direction.Left:
-                    vectorDirection.x--;
+                    vectorDirection.X--;
                     break;
                 case Direction.Right:
-                    vectorDirection.x++;
+                    vectorDirection.X++;
                     break;
             }
             return vectorDirection;
@@ -89,21 +88,21 @@ namespace Snake.Game
 
         private bool VeryficationDirectionCollision(Vector2D direction)
         {
-            Object obj = GameManager.GetObject(SnakeBody[0].position+ direction);
-            if (obj != null && obj.collision)
+            Object obj = GameManager.GetObject(SnakeBody[0].Position+ direction);
+            if (obj != null && obj.Collision)
                 return true;
 
-            if(obj != null && !obj.collision)
+            if(obj != null && !obj.Collision)
             {
-                switch(obj.name)
+                switch(obj.Name)
                 {
                     case "apple":
                         {
                             obj.Destroy();
                             AddBody();
-                            if (difficulti == DifficultiGame.Easy)
+                            if (Difficulti == DifficultiGame.Easy)
                                 Scores += 5;
-                            else if (difficulti == DifficultiGame.Medium)
+                            else if (Difficulti == DifficultiGame.Medium)
                                 Scores += 10;
                             else
                                 Scores += 15;
@@ -124,23 +123,23 @@ namespace Snake.Game
         {
             for (int i = SnakeBody.Count - 1; i > 0; i--)
                 if (SnakeBody[i] != null && SnakeBody[i - 1] != null)
-                    SnakeBody[i].position = SnakeBody[i - 1].position;
+                    SnakeBody[i].Position = SnakeBody[i - 1].Position;
         }
 
         private void OnPressKey(ConsoleKey key)
         {
             switch (key)
             {
-                case ConsoleKey.W:
+                case ConsoleKey nullKey when key == ConsoleKey.W || key == ConsoleKey.UpArrow:
                     direction = Direction.Up;
                     break;
-                case ConsoleKey.S:
+                case ConsoleKey nullKey when key == ConsoleKey.S || key == ConsoleKey.DownArrow:
                     direction = Direction.Down;
                     break;
-                case ConsoleKey.A:
+                case ConsoleKey nullKey when key == ConsoleKey.A || key == ConsoleKey.LeftArrow:
                     direction = Direction.Left;
                     break;
-                case ConsoleKey.D:
+                case ConsoleKey nullKey when key == ConsoleKey.D || key == ConsoleKey.RightArrow:
                     direction = Direction.Right;
                     break;
             }

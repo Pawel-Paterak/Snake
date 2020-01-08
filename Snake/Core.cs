@@ -4,31 +4,36 @@ using Snake.Game;
 using Snake.Game.Enums;
 using Snake.Files.Json;
 using Snake.Files;
+using Snake.Configurations;
 
 namespace Snake
 {
     public class Core
     {
-        private GameManager game = new GameManager();
+        private readonly KeyboardControl keyboardControl = new KeyboardControl();
+        private readonly GameManager game = new GameManager();
         private Menu menu;
+        public static bool Closing { get; set; } = false;
 
         public void Start()
         {
             Veryfications();
-            KeyboardControl.Start();
+
+            keyboardControl.Start();
             menu = new Menu(game);
             Loop();
-            KeyboardControl.Close();
+            keyboardControl.Close();
         }
 
         private void Loop()
         {
-            bool isLoop = true;
             do
             {
-                MainMenu();
-                StartGame();
-            } while (isLoop);
+                if(!Closing)
+                    MainMenu();
+                if (!Closing)
+                    StartGame();
+            } while (!Closing);
         }
 
         private void MainMenu()
@@ -45,8 +50,8 @@ namespace Snake
         private void Veryfications()
         {
             JsonManager jManager = new JsonManager();
-            if(!jManager.Exists("scores.json"))
-                jManager.Write("scores.json", new ScoresFile(new List<Score>()));
+            if(!jManager.Exists(GameConfig.ScoresFile))
+                jManager.Write(GameConfig.ScoresFile, new ScoresFile(new List<Score>()));
         }
     }
 }
