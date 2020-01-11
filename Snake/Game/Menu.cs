@@ -44,8 +44,8 @@ namespace Snake.Game
         private int countOptionChoose;
         private Action menuRender;
         private Action goInteractionMenu;
-        private readonly ConsoleColor[] colorsSnake;
-        private readonly char[] skinsSnake;
+        private ConsoleColor[] colorsSnake;
+        private char[] skinsSnake;
         private bool IsRenderCanvas { get; set; } = false;
 
         public Menu(GameManager game)
@@ -78,7 +78,7 @@ namespace Snake.Game
             KeyboardControl.PressKeyEvent += OnPressKey;
 
             IsRenderCanvas = true;
-            MenuEnum lastMenu = (Canvas != MenuEnum.MainMenu) ? MenuEnum.MainMenu:MenuEnum.Scores;
+            MenuEnum lastMenu = MenuEnum.Scores;
             do
             {
                 switch (Canvas)
@@ -139,7 +139,7 @@ namespace Snake.Game
         private void MainMenuRender()
         {
             render.Clear();
-            ConsoleConfig console = new ConsoleConfig();
+            ConsoleConfiguration console = new ConsoleConfiguration();
             Frame();
             string[] options = new string[4];
             options[0] = "Start";
@@ -147,8 +147,8 @@ namespace Snake.Game
             options[2] = "Scores";
             options[3] = "Exit";
 
-            int widht = console.Widht / 2;
-            int height = console.Height / 2 - options.Length/2;
+            int widht = console.widht / 2;
+            int height = console.height / 2 - options.Length/2;
 
             for (int i=0; i< options.Length; i++)
             {
@@ -162,17 +162,17 @@ namespace Snake.Game
 
         private void Frame()
         {
-            ConsoleConfig console = new ConsoleConfig();
-            for (int x = 0; x < console.Widht; x++)
+            ConsoleConfiguration console = new ConsoleConfiguration();
+            for (int x = 0; x < console.widht; x++)
             {
                 render.Write("#", x, 0);
-                render.Write("#", x, console.Height - 2);
+                render.Write("#", x, console.height - 2);
             }
 
-            for (int y = 0; y < console.Height - 1; y++)
+            for (int y = 0; y < console.height - 1; y++)
             {
                 render.Write("#", 0, y);
-                render.Write("#", console.Widht - 1, y);
+                render.Write("#", console.widht - 1, y);
             }
         }
 
@@ -205,7 +205,7 @@ namespace Snake.Game
         private void LevelsMenuRender()
         {
             render.Clear();
-            ConsoleConfig console = new ConsoleConfig();
+            ConsoleConfiguration console = new ConsoleConfiguration();
             Frame();
             string[] options = new string[4];
             options[0] = "Easy";
@@ -213,8 +213,8 @@ namespace Snake.Game
             options[2] = "Hard";
             options[3] = "Back";
 
-            int widht = console.Widht / 2;
-            int height = console.Height / 2 - options.Length / 2;
+            int widht = console.widht / 2;
+            int height = console.height / 2 - options.Length / 2;
 
             for (int i = 0; i < options.Length; i++)
             {
@@ -232,21 +232,21 @@ namespace Snake.Game
             {
                 case 0:
                     {
-                        game.Snake.Difficulti = DifficultiGame.Easy;
+                        game.Snake.difficulti = DifficultiGame.Easy;
                         game.RefreshTime = 100;
                         IsRenderCanvas = false;
                         break;
                     }
                 case 1:
                     {
-                        game.Snake.Difficulti = DifficultiGame.Medium;
+                        game.Snake.difficulti = DifficultiGame.Medium;
                         game.RefreshTime = 60;
                         IsRenderCanvas = false;
                         break;
                     }
                 case 2:
                     {
-                        game.Snake.Difficulti = DifficultiGame.Hard;
+                        game.Snake.difficulti = DifficultiGame.Hard;
                         game.RefreshTime = 30;
                         IsRenderCanvas = false;
                         break;
@@ -266,15 +266,15 @@ namespace Snake.Game
         private void CustomsSnakeMenuRender()
         {
             render.Clear();
-            ConsoleConfig console = new ConsoleConfig();
+            ConsoleConfiguration console = new ConsoleConfiguration();
             Frame();
             string[] options = new string[4];
             options[0] = "Color";
             options[1] = "Skin";
             options[2] = "Play";
             options[3] = "Back";
-            int widht = console.Widht / 2;
-            int height = console.Height / 2 - (options.Length+2) / 2;
+            int widht = console.widht / 2;
+            int height = console.height / 2 - (options.Length+2) / 2;
 
             for (int i = 0; i < options.Length; i++)
             {
@@ -361,9 +361,10 @@ namespace Snake.Game
         private void ScoresMenuRender()
         {
             render.Clear();
+            ConsoleConfiguration console = new ConsoleConfiguration();
             Frame();
             JsonManager json = new JsonManager();
-            ScoresFile scoresFile = json.Read<ScoresFile>(GameConfig.ScoresFile);
+            ScoresFile scoresFile = json.Read<ScoresFile>("scores.json");
             for (int i=0; i<17; i++)
             {
                 string text = (i + 1) + ": ";
@@ -393,12 +394,6 @@ namespace Snake.Game
 
         private void OnPressKey(ConsoleKey key)
         {
-            if (key == ConsoleKey.Enter)
-            {
-                goInteractionMenu?.Invoke();
-                _optionChoose = 0;
-            }
-
             if (key == ConsoleKey.W || key == ConsoleKey.UpArrow)
                 OptionChoose--;
             if (key == ConsoleKey.S || key == ConsoleKey.DownArrow)
@@ -436,33 +431,34 @@ namespace Snake.Game
                 OptionChooseSkin = skinsSnake.Length - 1;
             else if (OptionChooseSkin >= skinsSnake.Length)
                 OptionChooseSkin = 0;
+
+            if (key == ConsoleKey.Enter)
+                goInteractionMenu?.Invoke();
         }
 
         private void CloseConsole()
         {
-            Core.Closing = true;
             IsRenderCanvas = false;
-            //Environment.Exit(0);
+            KeyboardControl.Close();
+            Environment.Exit(0);
         }
 
         public void GameoverMenu(int scores)
         {
             string text = "GameOver, you scores " + scores;
-            ConsoleConfig console = new ConsoleConfig();
-            game.WaitForPlayerName = true;
+            ConsoleConfiguration console = new ConsoleConfiguration();
+            game.waitForPlayerName = true;
             string nameRender = "";
-            bool firstTime = true;
             do
             {
-                if (game.Name != nameRender || firstTime)
+                if (game.name != nameRender)
                 {
-                    firstTime = false;
-                    nameRender = game.Name;
+                    nameRender = game.name;
                     render.Clear();
-                    render.Write(text, console.Widht / 2 - text.Length / 2, console.Height / 2);
-                    render.Write(nameRender, console.Widht / 2 - nameRender.Length / 2, console.Height / 2 + 2);
+                    render.Write(text, console.widht / 2 - text.Length / 2, console.height / 2);
+                    render.Write(nameRender, console.widht / 2 - nameRender.Length / 2, console.height / 2 + 2);
                 }
-            } while (game.WaitForPlayerName);
+            } while (game.waitForPlayerName);
         }
     }
 }

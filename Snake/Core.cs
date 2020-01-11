@@ -5,22 +5,23 @@ using Snake.Game.Enums;
 using Snake.Files.Json;
 using Snake.Files;
 using Snake.Configurations;
+using Snake.Game.Menu;
 
 namespace Snake
 {
     public class Core
     {
+        public static bool Closing { get; set; } = false;
+
         private readonly KeyboardControl keyboardControl = new KeyboardControl();
         private readonly GameManager game = new GameManager();
-        private Menu menu;
-        public static bool Closing { get; set; } = false;
+        private MenuManager menu;
 
         public void Start()
         {
             Veryfications();
-
             keyboardControl.Start();
-            menu = new Menu(game);
+            menu = new MenuManager(game);
             Loop();
             keyboardControl.Close();
         }
@@ -37,15 +38,10 @@ namespace Snake
         }
 
         private void MainMenu()
-        {
-            menu.Canvas = MenuEnum.MainMenu;
-            menu.RenderCanvas();
-        }
+            => menu.RenderCanvas(CanvasEnum.MainMenu);
 
         private void StartGame()
-        {
-            game.Start();
-        }
+            =>   game.Start();
 
         private void Veryfications()
         {

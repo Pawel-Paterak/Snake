@@ -2,6 +2,7 @@
 using Snake.Controlers;
 using Snake.Files;
 using Snake.Files.Json;
+using Snake.Game.Menu;
 using Snake.Game.Render;
 using System;
 using System.Collections.Generic;
@@ -62,8 +63,7 @@ namespace Snake.Game
             KeyboardControl.PressKeyEvent += OnPressKey;
             KeyboardControl.KeyboardCloseEvent += OnClosingKeyboard;
 
-            Menu menu = new Menu(this);
-            menu.GameoverMenu(scores);
+            MenuManager.singleton.GameoverMenu(scores);
 
             KeyboardControl.PressKeyEvent -= OnPressKey;
             KeyboardControl.KeyboardCloseEvent -= OnClosingKeyboard;
