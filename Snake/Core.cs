@@ -36,13 +36,10 @@ namespace Snake
                     StartGame();
             } while (!Closing);
         }
-
         private void MainMenu()
             => menu.RenderCanvas(CanvasEnum.MainMenu);
-
         private void StartGame()
             =>   game.Start();
-
         private void Veryfications()
         {
             JsonManager jManager = new JsonManager();

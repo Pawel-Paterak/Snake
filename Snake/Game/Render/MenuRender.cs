@@ -31,7 +31,6 @@ namespace Snake.Game.Render
                 render.Write(text, widht - offsetXText, height + 2 * i);
             }
         }
-
         public void LevelsMenuRender()
         {
             render.Clear();
@@ -54,7 +53,6 @@ namespace Snake.Game.Render
                 render.Write(text, widht - offsetXText, height + 2 * i);
             }
         }
-
         public void CustomsSnakeMenuRender()
         {
             render.Clear();
@@ -127,7 +125,6 @@ namespace Snake.Game.Render
                 }
             }
         }
-
         public void ScoresMenuRender()
         {
             render.Clear();
@@ -144,7 +141,6 @@ namespace Snake.Game.Render
 
             render.Write("> back <", 2, 36);
         }
-
         public void Frame()
         {
             ConsoleConfig console = new ConsoleConfig();

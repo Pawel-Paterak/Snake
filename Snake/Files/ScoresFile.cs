@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Snake.Game;
+using System.Collections.Generic;
 
 namespace Snake.Files
 {
@@ -10,27 +11,43 @@ namespace Snake.Files
         {
 
         }
-
         public ScoresFile(List<Score> scores)
         {
             Scores = scores;
         }
-    }
-
-    public class Score
-    {
-        public int Scores { get; set; }
-        public string Name { get; set; }
-
-        public Score()
+        public void AddScores(Score score)
         {
+            int countScores = 17;
+            int missingScore = countScores - Scores.Count;
+            if (missingScore > 0)
+            {
+                for (int i = 0; i < missingScore; i++)
+                    Scores.Add(new Score(0, ""));
+            }
 
+            for (int i = countScores - 1; i >= 0; i--)
+            {
+                if (i == 0 && Scores[i].Scores < score.Scores)
+                {
+                    AddScoreToScores(score, i);
+                    return;
+                }
+                else if (i != countScores - 1 && Scores[i].Scores >= score.Scores)
+                {
+                    AddScoreToScores(score, i + 1);
+                    return;
+                }
+            }
         }
 
-        public Score(int scores, string name)
+        private void AddScoreToScores(Score score, int index)
         {
-            Scores = scores;
-            Name = name;
+                int countScores = Scores.Count;
+                for (int i = countScores - 1; i > index; i--)
+                    Scores[i] = Scores[i - 1];
+
+                if (Scores[index].Scores != score.Scores)
+                    Scores[index] = score;
         }
     }
 }

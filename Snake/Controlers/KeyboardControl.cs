@@ -23,6 +23,20 @@ namespace Snake.Controlers
                 LoopTask.Start();
             }
         }
+        public void Close()
+        {
+            IsRunning = false;
+
+            ConsoleRender render = new ConsoleRender();
+            ConsoleConfig config = new ConsoleConfig();
+            string text = "Press key to close";
+            int offsetText = text.Length / 2;
+            render.Clear();
+            render.Write(text, config.Widht / 2 - offsetText, config.Height / 2);
+
+            LoopTask.Wait(-1);
+            LoopTask.Dispose();
+        }
 
         private void Loop()
         {
@@ -34,21 +48,6 @@ namespace Snake.Controlers
                 WaitForKey = false;
             } while (IsRunning);
             KeyboardCloseEvent?.Invoke();
-        }
-
-        public void Close()
-        {
-            IsRunning = false;
-
-            ConsoleRender render = new ConsoleRender();
-            ConsoleConfig config = new ConsoleConfig();
-            string text = "Press key to close";
-            int offsetText = text.Length / 2;
-            render.Clear();
-            render.Write(text, config.Widht/2-offsetText, config.Height/2);
-
-            LoopTask.Wait(-1);
-            LoopTask.Dispose();
         }
     }
 }

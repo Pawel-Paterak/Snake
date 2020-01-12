@@ -27,7 +27,6 @@ namespace Snake.Game.Menu
         {
 
         }
-
         public OptionChoose(int option, int countOption)
         {
             Option = option;

@@ -22,7 +22,6 @@ namespace Snake.Game
             KeyboardControl.PressKeyEvent += OnPressKey;
             KeyboardControl.KeyboardCloseEvent += OnCloseKeyboard;
         }
-
         public void Close()
         {
             Scores = 0;
@@ -36,7 +35,6 @@ namespace Snake.Game
             SnakeBody = new List<Object>();
             OnCloseKeyboard();
         }
-
         public bool Move()
         {
             Vector2D vecDirection = VectorDirection(direction);
@@ -48,7 +46,7 @@ namespace Snake.Game
                 return false;
 
             MoveBody();
-            SnakeBody[0].Position += vecDirection;
+            SnakeBody[0].Move(vecDirection, true, false, true) ;
             previousDirection = direction;
             return true;
         }
@@ -73,7 +71,6 @@ namespace Snake.Game
             }
             return vectorDirection;
         }
-
         private bool VeryficationDirection()
         {
             if ((previousDirection == Direction.Up && direction == Direction.Down) ||
@@ -85,7 +82,6 @@ namespace Snake.Game
             }
             return true;
         }
-
         private bool VeryficationDirectionCollision(Vector2D direction)
         {
             Object obj = GameManager.GetObject(SnakeBody[0].Position+ direction);
@@ -96,7 +92,7 @@ namespace Snake.Game
             {
                 switch(obj.Name)
                 {
-                    case "apple":
+                    case "Apple":
                         {
                             obj.Destroy();
                             AddBody();
@@ -113,19 +109,17 @@ namespace Snake.Game
 
             return false;
         }
-
         private void AddBody()
         {
             SnakeBody.Add(new Object("Body"+(SnakeBody.Count-1), new Vector2D(20, 20), SkinSnake, ColorSnake, true));
         }
-
         private void MoveBody()
         {
+            SnakeBody[SnakeBody.Count - 1].ClearRender();
             for (int i = SnakeBody.Count - 1; i > 0; i--)
                 if (SnakeBody[i] != null && SnakeBody[i - 1] != null)
-                    SnakeBody[i].Position = SnakeBody[i - 1].Position;
+                    SnakeBody[i].Move(SnakeBody[i - 1].Position, true, false, false);
         }
-
         private void OnPressKey(ConsoleKey key)
         {
             switch (key)
@@ -144,7 +138,6 @@ namespace Snake.Game
                     break;
             }
         }
-
         private void OnCloseKeyboard()
         {
             KeyboardControl.PressKeyEvent -= OnPressKey;

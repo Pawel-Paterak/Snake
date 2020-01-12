@@ -26,7 +26,6 @@ namespace Snake.Files.Json
                 Console.ReadKey();
             }
         }
-
         public T Read<T>(string path)
         {
             T temp = default(T);
@@ -48,7 +47,6 @@ namespace Snake.Files.Json
             }
             return temp;
         }
-
         public bool Exists(string path)
          => File.Exists(path);
     }

@@ -1,20 +1,22 @@
-﻿using System;
+﻿using Snake.Game.Render;
+using System;
 
 namespace Snake.Game
 {
     public class Object
     {
-        public string Name { get; private set; } = "Default";
-        public Vector2D Position { get; set; } = new Vector2D(0, 0);
-        public ConsoleColor Color { get; private set; } = ConsoleColor.White;
-        public char CharRender { get; private set; } = ' ';
-        public bool Collision { get; private set; }
+        public string Name { get; set; } = "Default";
+        public Vector2D Position { get; private set; } = new Vector2D(0, 0);
+        public ConsoleColor Color { get; set; } = ConsoleColor.White;
+        public char CharRender { get; set; } = ' ';
+        public bool Collision { get; set; } = false;
+
+        private ConsoleRender render = new ConsoleRender();
 
         public Object()
         {
             Instantiate();
         }
-
         public Object(string name, Vector2D position, char charRender, ConsoleColor color, bool collision)
         {
             Name = name;
@@ -24,11 +26,37 @@ namespace Snake.Game
             Collision = collision;
             Instantiate();
         }
+        public void Destroy()
+        {
+            ClearRender();
+            GameManager.RemoveObject(this);
+        }
+        public void Move(Vector2D position, bool isOffset)
+           => Move(position, true, true, isOffset);
+        public void Move(Vector2D position, bool render, bool isOffset)
+           => Move(position, render, render, isOffset);
+        public void Move(Vector2D position, bool render = true, bool clear = true, bool isOffset = false)
+        {
+            if (clear)
+                ClearRender();
+
+            if (isOffset)
+                Position += position;
+            else
+                Position = position;
+
+            if (render)
+                Render();
+        }
+        public void Render()
+           => render.Write(CharRender.ToString(), Color, Position.X, Position.Y);
+        public void ClearRender()
+            => render.Write(" ", Position.X, Position.Y);
 
         private void Instantiate()
-            => GameManager.AddObject(this);
-
-        public void Destroy()
-           => GameManager.RemoveObject(this);
+        {
+            Render();
+            GameManager.AddObject(this);
+        }
     }
 }

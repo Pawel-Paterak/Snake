@@ -18,19 +18,13 @@ namespace Snake.Configurations
         }
 
         private void WindowTitle(string title)
-        {
-            Console.Title = title;
-        }
-
+          => Console.Title = title;
         private void WindowsSize(int widht, int height)
         {
             Console.SetWindowSize(widht, height);
             Console.SetBufferSize(widht, height);
         }
-
         private void CursorVisible(bool visible)
-        {
-            Console.CursorVisible = visible;
-        }
+            => Console.CursorVisible = visible;
     }
 }
