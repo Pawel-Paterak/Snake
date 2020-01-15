@@ -6,6 +6,8 @@ namespace Snake.Configurations
     {
         public int Widht {get; private set;} = 40;
         public int Height { get; private set; } = 40;
+        public int CenterX { get => Widht / 2; }
+        public int CenterY { get => Height / 2; }
 
         private const string title = "Snake";
         private const bool cursorVisible = false;

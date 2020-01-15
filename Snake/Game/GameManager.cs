@@ -18,7 +18,14 @@ namespace Snake.Game
         public Snake Snake { get; private set; } = new Snake();
 
         private readonly ConsoleRender render = new ConsoleRender();
-        private static List<Object> objects = new List<Object>();
+        private List<Object> objects = new List<Object>();
+        private static GameManager singleton { get; set; }
+
+        public GameManager()
+        {
+            if (singleton == null)
+                singleton = this;
+        }
 
         public void Start()
         {
@@ -27,17 +34,17 @@ namespace Snake.Game
             AddWalls();
             Loop();
         }
-        public static Object GetObject(Vector2D position)
+        public Object GetObject(Vector2D position)
         {
-            foreach (Object obj in objects)
+            foreach (Object obj in singleton.objects)
                 if (obj.Position == position)
                     return obj;
             return null;
         }
-        public static void AddObject(Object obj)
-           => objects.Add(obj);
-        public static void RemoveObject(Object obj)
-            => objects.Remove(obj);
+        public void AddObject(Object obj)
+           => singleton.objects.Add(obj);
+        public void RemoveObject(Object obj)
+            => singleton.objects.Remove(obj);
 
         private void Loop()
         {
@@ -51,9 +58,7 @@ namespace Snake.Game
                 bool isMove = Snake.Move();
                 if(!isMove)
                     isRunning = false;
-                //Render();
                 Thread.Sleep(RefreshTime);
-                //render.Clear();
             } while (isRunning);
             GameOver();
         }
@@ -70,7 +75,7 @@ namespace Snake.Game
             KeyboardControl.PressKeyEvent += OnPressKey;
             KeyboardControl.KeyboardCloseEvent += OnClosingKeyboard;
 
-            MenuManager.singleton.GameOverMenu(scores);
+            MenuManager.Singleton.GameOverMenu(scores);
 
             KeyboardControl.PressKeyEvent -= OnPressKey;
             KeyboardControl.KeyboardCloseEvent -= OnClosingKeyboard;
@@ -135,13 +140,6 @@ namespace Snake.Game
                     render.Write(obj.CharRender+"", obj.Color, obj.Position.X, obj.Position.Y);
             }
         }
-        private Object FindObject(string name)
-        {
-            foreach (Object coor in objects)
-                if (coor.Name == name)
-                    return coor;
-            return null;
-        }
         private void OnPressKey(ConsoleKey key)
         {
             if (WaitForPlayerName)
@@ -172,6 +170,13 @@ namespace Snake.Game
         {
             KeyboardControl.PressKeyEvent -= OnPressKey;
             KeyboardControl.KeyboardCloseEvent -= OnClosingKeyboard;
+        }
+        private Object FindObject(string name)
+        {
+            foreach (Object coor in objects)
+                if (coor.Name == name)
+                    return coor;
+            return null;
         }
     }
 }

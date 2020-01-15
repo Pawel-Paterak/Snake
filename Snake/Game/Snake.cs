@@ -2,6 +2,7 @@
 using Snake.Controlers;
 using System.Collections.Generic;
 using Snake.Game.Enums;
+using Snake.Configurations;
 
 namespace Snake.Game
 {
@@ -9,16 +10,17 @@ namespace Snake.Game
     {
         public List<Object> SnakeBody { get; private set; } = new List<Object>();
         public int Scores { get; private set; }
+        public char SkinSnake { get; set; } = '@';
         public DifficultiGame Difficulti { get; set; } = DifficultiGame.Easy;
         public ConsoleColor ColorSnake { get; set; } = ConsoleColor.White;
-        public char SkinSnake { get; set; } = '@';
 
         private Direction direction = Direction.Up;
         private Direction previousDirection = Direction.Up;
 
         public void Start()
         {
-            SnakeBody.Add(new Object("Head", new Vector2D(20, 20), SkinSnake, ColorSnake, true));
+            ConsoleConfig config = new ConsoleConfig();
+            SnakeBody.Add(new Object("Head", new Vector2D(config.CenterX, config.CenterY), SkinSnake, ColorSnake, true));
             KeyboardControl.PressKeyEvent += OnPressKey;
             KeyboardControl.KeyboardCloseEvent += OnCloseKeyboard;
         }
@@ -42,7 +44,7 @@ namespace Snake.Game
             if (!VeryficationDirection())
                 return false;
 
-            if (VeryficationDirectionCollision(vecDirection))
+            if (VeryficationCollision(vecDirection))
                 return false;
 
             MoveBody();
@@ -73,22 +75,22 @@ namespace Snake.Game
         }
         private bool VeryficationDirection()
         {
-            if ((previousDirection == Direction.Up && direction == Direction.Down) ||
-                   (previousDirection == Direction.Down && direction == Direction.Up) ||
-                   (previousDirection == Direction.Left && direction == Direction.Right) ||
-                   (previousDirection == Direction.Right && direction == Direction.Left))
-            {
+            Vector2D previous = VectorDirection(previousDirection);
+            Vector2D next =  VectorDirection(direction);
+            if (!previous == next)
                 return false;
-            }
             return true;
         }
-        private bool VeryficationDirectionCollision(Vector2D direction)
+        private bool VeryficationCollision(Vector2D direction)
         {
-            Object obj = GameManager.GetObject(SnakeBody[0].Position+ direction);
-            if (obj != null && obj.Collision)
-                return true;
+            GameManager gm = new GameManager();
+            Object obj = gm.GetObject(SnakeBody[0].Position+ direction);
+            if (obj == null)
+                return false;
 
-            if(obj != null && !obj.Collision)
+            if (obj.Collision)
+                return true;
+            else
             {
                 switch(obj.Name)
                 {
@@ -111,7 +113,8 @@ namespace Snake.Game
         }
         private void AddBody()
         {
-            SnakeBody.Add(new Object("Body"+(SnakeBody.Count-1), new Vector2D(20, 20), SkinSnake, ColorSnake, true));
+            Vector2D position = SnakeBody[SnakeBody.Count - 1].Position;
+            SnakeBody.Add(new Object("Body"+(SnakeBody.Count-1), position, SkinSnake, ColorSnake, true));
         }
         private void MoveBody()
         {

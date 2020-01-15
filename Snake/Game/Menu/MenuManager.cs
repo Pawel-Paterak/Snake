@@ -1,7 +1,5 @@
 ﻿using Snake.Configurations;
 using Snake.Controlers;
-using Snake.Files;
-using Snake.Files.Json;
 using Snake.Game.Enums;
 using Snake.Game.Menu.Canvas;
 using Snake.Game.Menu.Interface;
@@ -26,7 +24,6 @@ namespace Snake.Game.Menu
                 activeCanvas.Render?.Invoke();
             }
         }
-        public static MenuManager singleton { get; private set; }
 
         private CanvasEnum ActiveCanvas
         {
@@ -42,10 +39,16 @@ namespace Snake.Game.Menu
         private GameManager Game { get; set; }
         private ConsoleRender Render { get; set; } = new ConsoleRender();
 
+        public static MenuManager Singleton { get; set; }
+
+        public MenuManager()
+        {
+
+        }
         public MenuManager(GameManager game)
         {
-            if (singleton == null)
-                singleton = this;
+            if (Singleton == null)
+                Singleton = this;
 
             InitializeCanvas();
 
@@ -69,7 +72,7 @@ namespace Snake.Game.Menu
         }
         public void MainMenu()
         {
-            switch ((MainMenuEnum)OptionChoose)
+            switch ((MainMenuEnum)Singleton.OptionChoose)
             {
                 case MainMenuEnum.CustomsSnake:
                     {
@@ -94,7 +97,7 @@ namespace Snake.Game.Menu
         }
         public void LevelsMenu()
         {
-            switch ((LevelsEnum)OptionChoose)
+            switch ((LevelsEnum)Singleton.OptionChoose)
             {
                 case LevelsEnum.Easy:
                     {
@@ -130,7 +133,7 @@ namespace Snake.Game.Menu
         }
         public void CustomsSnakeMenu()
         {
-            switch ((CustomsSnakeEnum)OptionChoose)
+            switch ((CustomsSnakeEnum)Singleton.OptionChoose)
             {
                 case CustomsSnakeEnum.play:
                     {
@@ -153,7 +156,7 @@ namespace Snake.Game.Menu
         }
         public void ScoresMenu()
         {
-            switch ((ScoresEnum)OptionChoose)
+            switch ((ScoresEnum)Singleton.OptionChoose)
             {
                 case ScoresEnum.back:
                     {
@@ -185,10 +188,12 @@ namespace Snake.Game.Menu
                 }
             } while (Game.WaitForPlayerName);
         }
+        public int GetOptionChoose()
+            => Singleton.OptionChoose;
         public int GetChooseColor()
-         => OptionsChosseX[0].Option;
+         => Singleton.OptionsChosseX[0].Option;
         public int GetChooseSkins()
-         => OptionsChosseX[1].Option;
+         => Singleton.OptionsChosseX[1].Option;
 
         private void SetCanvas(CanvasEnum canvas)
         {

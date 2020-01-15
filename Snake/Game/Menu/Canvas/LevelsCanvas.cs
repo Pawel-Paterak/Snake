@@ -18,7 +18,7 @@ namespace Snake.Game.Menu.Canvas
             CountOption = 4;
             MenuRender menuRender = new MenuRender();
             Render = menuRender.LevelsMenuRender;
-            Action = MenuManager.singleton.LevelsMenu;
+            Action = MenuManager.Singleton.LevelsMenu;
         }
     }
 }

@@ -47,8 +47,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Configurations\ConsoleConfig.cs" />
+    <Compile Include="Configurations\MenuConfig.cs" />
     <Compile Include="Controlers\KeyboardControl.cs" />
     <Compile Include="Core.cs" />
+    <Compile Include="Extensions\StringExtension.cs" />
     <Compile Include="Game\Direction.cs" />
     <Compile Include="Files\Json\JsonManager.cs" />
     <Compile Include="Game\Score.cs" />

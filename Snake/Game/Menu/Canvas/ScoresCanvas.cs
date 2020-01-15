@@ -18,7 +18,7 @@ namespace Snake.Game.Menu.Canvas
             CountOption = 1;
             MenuRender menuRender = new MenuRender();
             Render = menuRender.ScoresMenuRender;
-            Action = MenuManager.singleton.ScoresMenu;
+            Action = MenuManager.Singleton.ScoresMenu;
         }
     }
 }

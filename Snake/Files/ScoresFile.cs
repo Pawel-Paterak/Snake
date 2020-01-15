@@ -5,6 +5,7 @@ namespace Snake.Files
 {
     public class ScoresFile
     {
+        public int MaxSlots { get; private set; } = 17;
         public List<Score> Scores { get; set; } = new List<Score>();
 
         public ScoresFile()
@@ -17,37 +18,38 @@ namespace Snake.Files
         }
         public void AddScores(Score score)
         {
-            int countScores = 17;
-            int missingScore = countScores - Scores.Count;
+            VeryficationLenghtScores();
+
+            if (Scores[0].Scores < score.Scores)
+                AddScoreToTable(score, 0);
+            else
+            {
+                for (int i = MaxSlots - 2; i > 0; i--)
+                {
+                    if (Scores[i].Scores >= score.Scores)
+                    {
+                        AddScoreToTable(score, i + 1);
+                        return;
+                    }
+                }
+            }
+        }
+
+        private void VeryficationLenghtScores()
+        {
+            int missingScore = MaxSlots - Scores.Count;
             if (missingScore > 0)
             {
                 for (int i = 0; i < missingScore; i++)
                     Scores.Add(new Score(0, ""));
             }
-
-            for (int i = countScores - 1; i >= 0; i--)
-            {
-                if (i == 0 && Scores[i].Scores < score.Scores)
-                {
-                    AddScoreToScores(score, i);
-                    return;
-                }
-                else if (i != countScores - 1 && Scores[i].Scores >= score.Scores)
-                {
-                    AddScoreToScores(score, i + 1);
-                    return;
-                }
-            }
         }
-
-        private void AddScoreToScores(Score score, int index)
+        private void AddScoreToTable(Score score, int index)
         {
                 int countScores = Scores.Count;
                 for (int i = countScores - 1; i > index; i--)
                     Scores[i] = Scores[i - 1];
-
-                if (Scores[index].Scores != score.Scores)
-                    Scores[index] = score;
+                Scores[index] = score;
         }
     }
 }

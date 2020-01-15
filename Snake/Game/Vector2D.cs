@@ -29,6 +29,8 @@
            => l.X == r.X && l.Y == r.Y;
         public static bool operator !=(Vector2D l, Vector2D r)
            => l.X != r.X || l.Y != r.Y;
+        public static Vector2D operator !(Vector2D l)
+            => new Vector2D(l.X*-1, l.Y*-1);
         public static Vector2D operator +(Vector2D l, Vector2D r)
            => new Vector2D(l.X+r.X, l.Y+r.Y);
         public static Vector2D operator -(Vector2D l, Vector2D r)

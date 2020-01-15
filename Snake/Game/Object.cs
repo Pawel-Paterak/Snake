@@ -11,7 +11,7 @@ namespace Snake.Game
         public char CharRender { get; set; } = ' ';
         public bool Collision { get; set; } = false;
 
-        private ConsoleRender render = new ConsoleRender();
+        private readonly ConsoleRender render = new ConsoleRender();
 
         public Object()
         {
@@ -29,7 +29,8 @@ namespace Snake.Game
         public void Destroy()
         {
             ClearRender();
-            GameManager.RemoveObject(this);
+            GameManager gm = new GameManager();
+            gm.RemoveObject(this);
         }
         public void Move(Vector2D position, bool isOffset)
            => Move(position, true, true, isOffset);
@@ -56,7 +57,8 @@ namespace Snake.Game
         private void Instantiate()
         {
             Render();
-            GameManager.AddObject(this);
+            GameManager gm = new GameManager();
+            gm.AddObject(this);
         }
     }
 }

@@ -2,159 +2,155 @@
 using Snake.Files;
 using Snake.Files.Json;
 using Snake.Game.Menu;
+using Snake.Extensions;
+using System;
 
 namespace Snake.Game.Render
 {
     public class MenuRender
     {
-        private readonly ConsoleRender render = new ConsoleRender();
+        private ConsoleRender Render { get; set; }  = new ConsoleRender();
+        private MenuConfig Config { get; set; } = new MenuConfig();
 
         public void MainMenuRender()
         {
-            render.Clear();
-            ConsoleConfig console = new ConsoleConfig();
+            Render.Clear();
+            ConsoleConfig config = new ConsoleConfig();
+            MenuManager menuManager = new MenuManager();
             Frame();
-            string[] options = new string[4];
-            options[0] = "Start";
-            options[1] = "Multiplayer(disable)";
-            options[2] = "Scores";
-            options[3] = "Exit";
 
-            int widht = console.Widht / 2;
-            int height = console.Height / 2 - options.Length / 2;
-            for (int i = 0; i < options.Length; i++)
+            int widht = config.CenterX;
+            int height = config.CenterY - Config.MenuOptions.HalfLength();
+            for (int i = 0; i < Config.MenuOptions.Length; i++)
             {
-                string text = options[i];
-                if (i == MenuManager.singleton.OptionChoose)
+                string text = Config.MenuOptions[i];
+                if (i == menuManager.GetOptionChoose())
                     text = "> " + text + " <";
-                int offsetXText = text.Length / 2;
-                render.Write(text, widht - offsetXText, height + 2 * i);
-            }
-        }
-        public void LevelsMenuRender()
-        {
-            render.Clear();
-            ConsoleConfig console = new ConsoleConfig();
-            Frame();
-            string[] options = new string[4];
-            options[0] = "Easy";
-            options[1] = "Medium";
-            options[2] = "Hard";
-            options[3] = "Back";
-
-            int widht = console.Widht / 2;
-            int height = console.Height / 2 - options.Length / 2;
-            for (int i = 0; i < options.Length; i++)
-            {
-                string text = options[i];
-                if (i == MenuManager.singleton.OptionChoose)
-                    text = "> " + text + " <";
-                int offsetXText = text.Length / 2;
-                render.Write(text, widht - offsetXText, height + 2 * i);
+                Render.Write(text, widht - text.HalfLength(), height + 2 * i);
             }
         }
         public void CustomsSnakeMenuRender()
         {
-            render.Clear();
-            ConsoleConfig console = new ConsoleConfig();
+            Render.Clear();
+            ConsoleConfig config = new ConsoleConfig();
             GameConfig gameConfig = new GameConfig();
+            MenuManager menuManager = new MenuManager();
             Frame();
-            string[] options = new string[4];
-            options[0] = "Color";
-            options[1] = "Skin";
-            options[2] = "Play";
-            options[3] = "Back";
-            int widht = console.Widht / 2;
-            int height = console.Height / 2 - (options.Length + 2) / 2;
-            int option = MenuManager.singleton.OptionChoose;
-            for (int i = 0; i < options.Length; i++)
+            int widht = config.CenterX;
+            int height = config.CenterY - (Config.CustomsSnakeOptions.Length + 2) / 2;
+            int option = menuManager.GetOptionChoose();
+            int chooseColor = menuManager.GetChooseColor();
+            int chooseSkin = menuManager.GetChooseSkins();
+            for (int i = 0; i < Config.CustomsSnakeOptions.Length; i++)
             {
-                string text = options[i];
+                string text = Config.CustomsSnakeOptions[i];
+                int textHeigth = height + 2 * i;
                 if (option == i && i != 0 && i != 1)
                     text = "> " + text + " <";
 
-                if (option != 0 && i == 0)
-                    text += " " + gameConfig.ColorsSnake[MenuManager.singleton.GetChooseColor()];
-
-                if (option != 1 && i == 1)
-                    text += " " + gameConfig.SkinsSnake[MenuManager.singleton.GetChooseSkins()];
-
-                int offsetXText = text.Length / 2;
-                render.Write(text, widht - offsetXText, height + 2 * i);
-
-                if (option == 0 && i == 0)
+                if (i == 0)
                 {
-                    int index = MenuManager.singleton.GetChooseColor() - 1;
-                    if (index < 0)
-                        index = gameConfig.ColorsSnake.Length - 1;
-                    text = gameConfig.ColorsSnake[index] + " ";
-
-                    index = MenuManager.singleton.GetChooseColor();
-                    if (index < 0 || index > gameConfig.ColorsSnake.Length - 1)
-                        index = 0;
-                    text += "> " + gameConfig.ColorsSnake[index] + " < ";
-
-                    index = MenuManager.singleton.GetChooseColor() + 1;
-                    if (index > gameConfig.ColorsSnake.Length - 1)
-                        index = 0;
-                    text += gameConfig.ColorsSnake[index];
-
-                    offsetXText = text.Length / 2;
-                    render.Write(text, widht - offsetXText, height + 2 * i);
+                    if (option != 0)
+                        text += " " + gameConfig.ColorsSnake[chooseColor];
+                    else
+                        text = RenderCustomsColorOption(chooseColor);
                 }
-
-                if (option == 1 && i == 1)
+                else if (i == 1)
                 {
-                    int index = MenuManager.singleton.GetChooseSkins() - 1;
-                    if (index < 0)
-                        index = gameConfig.SkinsSnake.Length - 1;
-                    text = gameConfig.SkinsSnake[index] + " ";
-
-                    index = MenuManager.singleton.GetChooseSkins();
-                    if (index < 0 || index > gameConfig.SkinsSnake.Length - 1)
-                        index = 0;
-                    text += "> " + gameConfig.SkinsSnake[index] + " < ";
-
-                    index = MenuManager.singleton.GetChooseSkins() + 1;
-                    if (index > gameConfig.SkinsSnake.Length - 1)
-                        index = 0;
-                    text += gameConfig.SkinsSnake[index];
-
-                    offsetXText = text.Length / 2;
-                    render.Write(text, widht - offsetXText, height + 2 * i);
+                    if (option != 1)
+                        text += " " + gameConfig.SkinsSnake[chooseSkin];
+                    else
+                        text = RenderCustomsSkinsOption(chooseSkin);
                 }
+                Render.Write(text, widht - text.HalfLength(), textHeigth);
+            }
+        }
+        public void LevelsMenuRender()
+        {
+            Render.Clear();
+            ConsoleConfig config = new ConsoleConfig();
+            MenuManager menuManager = new MenuManager();
+            Frame();
+            int widht = config.CenterX;
+            int height = config.CenterY - Config.LevelsOptions.HalfLength();
+            for (int i = 0; i < Config.LevelsOptions.Length; i++)
+            {
+                string text = Config.LevelsOptions[i];
+                if (i == menuManager.GetOptionChoose())
+                    text = "> " + text + " <";
+                Render.Write(text, widht - text.HalfLength(), height + 2 * i);
             }
         }
         public void ScoresMenuRender()
         {
-            render.Clear();
+            Render.Clear();
             Frame();
             JsonManager json = new JsonManager();
             ScoresFile scoresFile = json.Read<ScoresFile>(GameConfig.ScoresFile);
-            for (int i = 0; i < 17; i++)
+            if (scoresFile != null)
             {
-                string text = (i + 1) + ": ";
-                if (scoresFile != null && i < scoresFile.Scores.Count)
+                for (int i = 0; i < scoresFile.MaxSlots; i++)
+                {
+                    string text = (i + 1) + ": ";
                     text += scoresFile.Scores[i].Name + " " + scoresFile.Scores[i].Scores;
-                render.Write(text, 2, 2 + 2 * i);
+                    Render.Write(text, 2, 2 + 2 * i);
+                }
             }
 
-            render.Write("> back <", 2, 36);
+            Render.Write("> "+Config.ScoreOption+" <", 2, 36);
         }
         public void Frame()
         {
             ConsoleConfig console = new ConsoleConfig();
             for (int x = 0; x < console.Widht; x++)
             {
-                render.Write("#", x, 0);
-                render.Write("#", x, console.Height - 2);
+                Render.Write("#", x, 0);
+                Render.Write("#", x, console.Height - 2);
             }
 
             for (int y = 0; y < console.Height - 1; y++)
             {
-                render.Write("#", 0, y);
-                render.Write("#", console.Widht - 1, y);
+                Render.Write("#", 0, y);
+                Render.Write("#", console.Widht - 1, y);
             }
+        }
+
+        private string RenderCustomsSkinsOption(int choose)
+        {
+            ConsoleConfig config = new ConsoleConfig();
+            GameConfig gameConfig = new GameConfig();
+            char[] skins = gameConfig.SkinsSnake;
+            int widht = config.CenterX;
+
+            int index = choose - 1;
+            if (index < 0)
+                index = skins.Length - 1;
+            string text = skins[index] + " > " + skins[choose] + " < ";
+
+            index = choose + 1;
+            if (index > skins.Length - 1)
+                index = 0;
+            text += skins[index];
+
+            return text;
+        }
+        private string RenderCustomsColorOption(int choose)
+        {
+            ConsoleConfig config = new ConsoleConfig();
+            GameConfig gameConfig = new GameConfig();
+            ConsoleColor[] colors = gameConfig.ColorsSnake;
+
+            int index = choose - 1;
+            if (index < 0)
+                index = colors.Length - 1;
+            string text = colors[index] + " > " + colors[choose] + " < ";
+
+            index = choose + 1;
+            if (index > colors.Length - 1)
+                index = 0;
+            text += colors[index];
+
+            return text;
         }
     }
 }
