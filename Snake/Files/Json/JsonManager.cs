@@ -2,6 +2,7 @@
 using System.IO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Snake.Game.Render;
 
 namespace Snake.Files.Json
 {
@@ -20,10 +21,11 @@ namespace Snake.Files.Json
             }
             catch (Exception e)
             {
-
+                ConsoleRender render = new ConsoleRender();
+                render.Write(e.Message, 0, 0);
+                Console.ReadKey();
             }
         }
-
         public T Read<T>(string path)
         {
             T temp = default(T);
@@ -39,11 +41,12 @@ namespace Snake.Files.Json
             }
             catch(Exception e)
             {
-
+                ConsoleRender render = new ConsoleRender();
+                render.Write(e.Message, 0, 0);
+                Console.ReadKey();
             }
             return temp;
         }
-
         public bool Exists(string path)
          => File.Exists(path);
     }

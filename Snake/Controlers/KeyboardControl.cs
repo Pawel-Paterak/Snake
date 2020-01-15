@@ -1,41 +1,53 @@
-﻿using System;
+﻿using Snake.Configurations;
+using Snake.Game.Render;
+using System;
 using System.Threading.Tasks;
 
 namespace Snake.Controlers
 {
-    public static class KeyboardControl
+    public class KeyboardControl
     {
         public static Action<ConsoleKey> PressKeyEvent { get; set; }
         public static Action KeyboardCloseEvent { get; set; }
 
-        private static bool isRunning { get; set; } = false;
-        private static Task LoopTask { get; set; }
+        private bool WaitForKey { get; set; } = false;
+        private bool IsRunning { get; set; } = false;
+        private Task LoopTask { get; set; }
 
-        public static void Start()
+        public void Start()
         {
-            if(!isRunning)
+            if(!IsRunning)
             {
-                isRunning = true;
+                IsRunning = true;
                 LoopTask = new Task(Loop);
                 LoopTask.Start();
             }
         }
+        public void Close()
+        {
+            IsRunning = false;
 
-        private static void Loop()
+            ConsoleRender render = new ConsoleRender();
+            ConsoleConfig config = new ConsoleConfig();
+            string text = "Press key to close";
+            int offsetText = text.Length / 2;
+            render.Clear();
+            render.Write(text, config.Widht / 2 - offsetText, config.Height / 2);
+
+            LoopTask.Wait(-1);
+            LoopTask.Dispose();
+        }
+
+        private void Loop()
         {
             do
             {
+                WaitForKey = true;
                 ConsoleKeyInfo keyInfo = Console.ReadKey(true);
                 PressKeyEvent?.Invoke(keyInfo.Key);
-            } while (isRunning);
+                WaitForKey = false;
+            } while (IsRunning);
             KeyboardCloseEvent?.Invoke();
-        }
-
-        public static void Close()
-        {
-            isRunning = false;
-            LoopTask.Wait();
-            LoopTask.Dispose();
         }
     }
 }

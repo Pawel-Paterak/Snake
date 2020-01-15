@@ -1,9 +1,10 @@
 ﻿namespace Snake.Game.Enums
 {
-    public enum DifficultiGame
+    public enum LevelsEnum
     {
         Easy,
         Medium,
-        Hard
+        Hard,
+        Back
     }
 }
