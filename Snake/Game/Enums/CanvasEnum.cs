@@ -3,7 +3,7 @@
     public enum CanvasEnum
     {
         MainMenu,
-        Levels,
+        GameSettings,
         Scores,
         CustomsSnake
     }

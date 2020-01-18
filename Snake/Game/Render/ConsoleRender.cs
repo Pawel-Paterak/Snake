@@ -9,8 +9,7 @@ namespace Snake.Game.Render
            => Console.Clear();
         public void SetCursor(int x, int y)
         {
-            ConsoleConfig consoleConfig = new ConsoleConfig();
-            if (x >= 0 && x < consoleConfig.Widht && y >= 0 && y < consoleConfig.Height)
+            if (x >= 0 && x < Console.BufferWidth && y >= 0 && y < Console.BufferHeight)
                 Console.SetCursorPosition(x, y);
         }
         public void Write(string chars)

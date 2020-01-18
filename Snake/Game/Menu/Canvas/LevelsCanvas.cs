@@ -5,20 +5,20 @@ using System;
 
 namespace Snake.Game.Menu.Canvas
 {
-    class LevelsCanvas : ICanvas
+    class GameSettingsCanvas : ICanvas
     {
         public CanvasEnum Canvas { get; set; }
         public int CountOption { get; set; }
         public Action Render { get; set; }
         public Action Action { get; set; }
 
-        public LevelsCanvas()
+        public GameSettingsCanvas()
         {
-            Canvas = CanvasEnum.Levels;
+            Canvas = CanvasEnum.GameSettings;
             CountOption = 4;
             MenuRender menuRender = new MenuRender();
-            Render = menuRender.LevelsMenuRender;
-            Action = MenuManager.Singleton.LevelsMenu;
+            Render = menuRender.GameSettingsMenuRender;
+            Action = MenuManager.Singleton.GameSettingsMenu;
         }
     }
 }

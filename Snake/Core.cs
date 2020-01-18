@@ -43,7 +43,7 @@ namespace Snake
         private void Veryfications()
         {
             JsonManager jManager = new JsonManager();
-            if(!jManager.Exists(GameConfig.ScoresFile))
+            if(!jManager.FileExists(GameConfig.ScoresFile))
                 jManager.Write(GameConfig.ScoresFile, new ScoresFile(new List<Score>()));
         }
     }

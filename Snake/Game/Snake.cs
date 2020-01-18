@@ -11,16 +11,16 @@ namespace Snake.Game
         public List<Object> SnakeBody { get; private set; } = new List<Object>();
         public int Scores { get; private set; }
         public char SkinSnake { get; set; } = '@';
-        public DifficultiGame Difficulti { get; set; } = DifficultiGame.Easy;
+        public DifficultiGameEnum Difficulti { get; set; } = DifficultiGameEnum.Easy;
         public ConsoleColor ColorSnake { get; set; } = ConsoleColor.White;
 
         private Direction direction = Direction.Up;
         private Direction previousDirection = Direction.Up;
 
-        public void Start()
+        public void Start(Vector2D startPoint)
         {
             ConsoleConfig config = new ConsoleConfig();
-            SnakeBody.Add(new Object("Head", new Vector2D(config.CenterX, config.CenterY), SkinSnake, ColorSnake, true));
+            SnakeBody.Add(new Object("Head", new Vector2D(startPoint.X, startPoint.Y), SkinSnake, ColorSnake, true));
             KeyboardControl.PressKeyEvent += OnPressKey;
             KeyboardControl.KeyboardCloseEvent += OnCloseKeyboard;
         }
@@ -29,7 +29,7 @@ namespace Snake.Game
             Scores = 0;
             direction = Direction.Up;
             previousDirection = Direction.Up;
-            Difficulti = DifficultiGame.Easy;
+            Difficulti = DifficultiGameEnum.Easy;
             ColorSnake = ConsoleColor.White;
             SkinSnake = '@';
             for (int i=0; i<SnakeBody.Count; i++)
@@ -98,9 +98,9 @@ namespace Snake.Game
                         {
                             obj.Destroy();
                             AddBody();
-                            if (Difficulti == DifficultiGame.Easy)
+                            if (Difficulti == DifficultiGameEnum.Easy)
                                 Scores += 5;
-                            else if (Difficulti == DifficultiGame.Medium)
+                            else if (Difficulti == DifficultiGameEnum.Medium)
                                 Scores += 10;
                             else
                                 Scores += 15;

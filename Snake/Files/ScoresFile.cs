@@ -21,18 +21,20 @@ namespace Snake.Files
             VeryficationLenghtScores();
 
             if (Scores[0].Scores < score.Scores)
-                AddScoreToTable(score, 0);
-            else
             {
-                for (int i = MaxSlots - 2; i > 0; i--)
+                AddScoreToTable(score, 0);
+                return;
+            }
+
+            for (int i = MaxSlots - 2; i > 0; i--)
+            {
+                if (Scores[i].Scores >= score.Scores)
                 {
-                    if (Scores[i].Scores >= score.Scores)
-                    {
-                        AddScoreToTable(score, i + 1);
-                        return;
-                    }
+                    AddScoreToTable(score, i + 1);
+                    return;
                 }
             }
+
         }
 
         private void VeryficationLenghtScores()

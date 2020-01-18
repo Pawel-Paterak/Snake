@@ -1,4 +1,5 @@
 ﻿using Snake.Configurations;
+using Snake.Extensions;
 using Snake.Game.Render;
 using System;
 using System.Threading.Tasks;
@@ -30,9 +31,9 @@ namespace Snake.Controlers
             ConsoleRender render = new ConsoleRender();
             ConsoleConfig config = new ConsoleConfig();
             string text = "Press key to close";
-            int offsetText = text.Length / 2;
+            int offsetText = text.HalfLength();
             render.Clear();
-            render.Write(text, config.Widht / 2 - offsetText, config.Height / 2);
+            render.Write(text, config.CenterX - offsetText, config.CenterY);
 
             LoopTask.Wait(-1);
             LoopTask.Dispose();

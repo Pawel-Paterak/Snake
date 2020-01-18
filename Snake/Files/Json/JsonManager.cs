@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -47,7 +48,23 @@ namespace Snake.Files.Json
             }
             return temp;
         }
-        public bool Exists(string path)
-         => File.Exists(path);
+        public bool DirectoryExists(string path)
+            => Directory.Exists(path);
+        public bool FileExists(string path)
+            => File.Exists(path);
+        public string[] GetFiles(string path)
+            => Directory.GetFiles(path);
+        public string[] GetJsonFiles(string path)
+           => GetJsonFiles(GetFiles(path));
+        public string[] GetJsonFiles(string[] files)
+        {
+            List<string> jsonFiles = new List<string>();
+            foreach(string file in files)
+            {
+                if (file.IndexOf(".json") != -1)
+                    jsonFiles.Add(file);
+            }
+            return jsonFiles.ToArray();
+        }
     }
 }
