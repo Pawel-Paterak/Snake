@@ -13,38 +13,137 @@ namespace Snake.Game
     public class GameManager
     {
         public int RefreshTime { get; set; } = 50;
-        public string Name { get; private set; } = "";
-        public bool WaitForPlayerName { get; set; } = false;
+        public string Name { get; private set; }
+        public bool WaitForPlayerName { get; set; }
         public Snake Snake { get; private set; } = new Snake();
+        public MapFile Map { get; set; }
 
         private readonly ConsoleRender render = new ConsoleRender();
-        private List<Object> objects = new List<Object>();
-        private static GameManager singleton { get; set; }
+        private List<GameObject> objects = new List<GameObject>();
+        private static GameManager Singleton;
 
         public GameManager()
         {
-            if (singleton == null)
-                singleton = this;
+            if (Singleton == null)
+                Singleton = this;
         }
 
         public void Start()
         {
             Name = "";
-            Snake.Start();
+            InitializeMap();
+            Snake.Start(Map.StartPoint);
             AddWalls();
             Loop();
         }
-        public Object GetObject(Vector2D position)
+
+        public void AddObject(GameObject obj)
+           => Singleton.objects.Add(obj);
+
+        public GameObject GetObject(Vector2D position)
         {
-            foreach (Object obj in singleton.objects)
+            foreach (GameObject obj in Singleton.objects)
                 if (obj.Position == position)
                     return obj;
             return null;
         }
-        public void AddObject(Object obj)
-           => singleton.objects.Add(obj);
-        public void RemoveObject(Object obj)
-            => singleton.objects.Remove(obj);
+
+        public void RemoveObject(GameObject obj)
+            => Singleton.objects.Remove(obj);
+
+        private void AddScoreToTable(Score score)
+        {
+            JsonManager json = new JsonManager();
+            ScoresFile scoresFile = json.Read<ScoresFile>(GameConfig.ScoresFile);
+            if (scoresFile != null)
+            {
+                scoresFile.AddScores(score);
+                json.Write(GameConfig.ScoresFile, scoresFile);
+            }
+        }
+
+        private void AddWalls()
+        {
+            ConsoleConfig config = new ConsoleConfig();
+            for (int x = 0; x < config.GetBufferX(); x++)
+            {
+                GameObject wallUp = new GameObject("Wall", new Vector2D(x, 0), '#', ConsoleColor.White, true);
+                GameObject wallDown = new GameObject("Wall", new Vector2D(x, config.GetBufferY() - 2), '#', ConsoleColor.White, true);
+                wallUp.Create();
+                wallDown.Create();
+            }
+            for (int y = 0; y < config.GetBufferY() - 1; y++)
+            {
+                GameObject wallLeft = new GameObject("Wall", new Vector2D(0, y), '#', ConsoleColor.White, true);
+                GameObject wallRight = new GameObject("Wall", new Vector2D(config.GetBufferX() - 1, y), '#', ConsoleColor.White, true);
+                wallLeft.Create();
+                wallRight.Create();
+            }
+        }
+
+        private GameObject FindObject(string name)
+        {
+            foreach (GameObject coor in objects)
+                if (coor.Name == name)
+                    return coor;
+            return null;
+        }
+
+        private void GameOver()
+        {
+            ConsoleConfig config = new ConsoleConfig();
+            config.Resize(config.Widht, config.Height);
+            int scores = Snake.Scores;
+            GameOverGetName(scores);
+            GameOverDispose();
+            Score score = new Score(scores, Name);
+            AddScoreToTable(score);
+        }
+
+        private void GenerateApple()
+        {
+            ConsoleConfig config = new ConsoleConfig();
+            bool isLoop = true;
+            Random rnd = new Random();
+            int x = 0;
+            int y = 0;
+            do
+            {
+                x = rnd.Next(1, config.GetBufferX() - 1);
+                y = rnd.Next(1, config.GetBufferY() - 1);
+                if (GetObject(new Vector2D(x, y)) == null)
+                    isLoop = false;
+            } while (isLoop);
+            GameObject apple = new GameObject("Apple", new Vector2D(x, y), '@', ConsoleColor.Red, false);
+            apple.Create();
+        }
+
+        private void GameOverDispose()
+        {
+            Snake.Close();
+            for (int i = 0; i < objects.Count; i++)
+                objects[i].Destroy();
+            objects = new List<GameObject>();
+        }
+
+        private void GameOverGetName(int scores)
+        {
+            KeyboardControl.PressKeyEvent += OnPressKey;
+            KeyboardControl.KeyboardCloseEvent += OnClosingKeyboard;
+
+            MenuManager.Singleton.GameOverMenu(scores);
+
+            KeyboardControl.PressKeyEvent -= OnPressKey;
+            KeyboardControl.KeyboardCloseEvent -= OnClosingKeyboard;
+        }
+
+        private void InitializeMap()
+        {
+           ConsoleConfig config = new ConsoleConfig();
+           config.Resize(Map.Size.X, Map.Size.Y);
+            foreach (GameObject obj in Map.Objects)
+                obj.Create();
+        }
 
         private void Loop()
         {
@@ -58,125 +157,57 @@ namespace Snake.Game
                 bool isMove = Snake.Move();
                 if(!isMove)
                     isRunning = false;
+                Render(false);
                 Thread.Sleep(RefreshTime);
             } while (isRunning);
             GameOver();
         }
-        private void GameOver()
-        {
-            int scores = Snake.Scores;
-            GameOverGetName(scores);
-            GameOverDispose();
-            Score score = new Score(scores, Name);
-            AddScoreToTable(score);
-        }
-        private void GameOverGetName(int scores)
-        {
-            KeyboardControl.PressKeyEvent += OnPressKey;
-            KeyboardControl.KeyboardCloseEvent += OnClosingKeyboard;
 
-            MenuManager.Singleton.GameOverMenu(scores);
-
-            KeyboardControl.PressKeyEvent -= OnPressKey;
-            KeyboardControl.KeyboardCloseEvent -= OnClosingKeyboard;
-        }
-        private void GameOverDispose()
-        {
-            Snake.Close();
-
-            Object apple = FindObject("apple");
-            if (apple != null)
-                apple.Destroy();
-
-            for (int i = 0; i < objects.Count; i++)
-                objects[i].Destroy();
-            objects = new List<Object>();
-        }
-        private void AddScoreToTable(Score score)
-        {
-            JsonManager json = new JsonManager();
-            ScoresFile scoresFile = json.Read<ScoresFile>(GameConfig.ScoresFile);
-            if (scoresFile != null)
-            {
-                scoresFile.AddScores(score);
-                json.Write(GameConfig.ScoresFile, scoresFile);
-            }
-        }
-        private void AddWalls()
-        {
-            ConsoleConfig console = new ConsoleConfig();
-            for (int x = 0; x < console.Widht; x++)
-            {
-                Object wallUp = new Object("Wall", new Vector2D(x, 0), '#', ConsoleColor.White, true);
-                Object wallDown = new Object("Wall", new Vector2D(x, console.Height - 2), '#', ConsoleColor.White, true);
-            }
-            for (int y = 0; y < console.Height-1; y++)
-            {
-                Object wallLeft = new Object("Wall", new Vector2D(0, y), '#', ConsoleColor.White, true);
-                Object wallRight = new Object("Wall", new Vector2D(console.Widht - 1, y), '#', ConsoleColor.White, true);
-            }
-        }
-        private void GenerateApple()
-        {
-            ConsoleConfig console = new ConsoleConfig();
-            bool isLoop = true;
-            Random rnd = new Random();
-            int x = 0;
-            int y = 0;
-            do
-            {
-                x = rnd.Next(1, console.Widht - 1);
-                y = rnd.Next(1, console.Height - 1);
-                if (GetObject(new Vector2D(x, y)) == null)
-                    isLoop = false;
-            } while (isLoop);
-            Object apple = new Object("Apple", new Vector2D(x, y), '@', ConsoleColor.Red, false);
-        }
-        private void Render()
-        {
-            foreach(Object obj in objects)
-            {
-                if(obj.CharRender != ' ')
-                    render.Write(obj.CharRender+"", obj.Color, obj.Position.X, obj.Position.Y);
-            }
-        }
         private void OnPressKey(ConsoleKey key)
         {
             if (WaitForPlayerName)
             {
-                switch(key)
+                switch (key)
                 {
                     case ConsoleKey.Enter:
-                            WaitForPlayerName = false;
-                            break;
+                        WaitForPlayerName = false;
+                        break;
                     case ConsoleKey.Backspace:
-                        if(Name.Length > 0)
-                            Name = Name.Remove(Name.Length-1, 1);
+                        if (Name.Length > 0)
+                            Name = Name.Remove(Name.Length - 1, 1);
                         break;
                     case ConsoleKey.Spacebar:
-                        if(Name.Length < 11)
+                        if (Name.Length < 11)
                             Name += " ";
                         break;
                     default:
                         {
-                            if(Name.Length < 11 && key.ToString().Length == 1)
+                            if (Name.Length < 11 && key.ToString().Length == 1)
                                 Name += key.ToString();
                             break;
                         }
                 }
             }
         }
+
         private void OnClosingKeyboard()
         {
             KeyboardControl.PressKeyEvent -= OnPressKey;
             KeyboardControl.KeyboardCloseEvent -= OnClosingKeyboard;
         }
-        private Object FindObject(string name)
+
+        private void Render(bool collisionRender = true)
         {
-            foreach (Object coor in objects)
-                if (coor.Name == name)
-                    return coor;
-            return null;
+            foreach(GameObject obj in objects)
+            {
+                if (obj.CharRender != ' ')
+                {
+                    if(!collisionRender == !obj.Collision)
+                        obj.Render();
+                    else if(collisionRender)
+                        obj.Render();
+                }
+            }
         }
     }
 }

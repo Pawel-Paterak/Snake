@@ -8,35 +8,38 @@ namespace Snake.Game
 {
     public class Snake
     {
-        public List<Object> SnakeBody { get; private set; } = new List<Object>();
+        public List<GameObject> SnakeBody { get; private set; } = new List<GameObject>();
         public int Scores { get; private set; }
         public char SkinSnake { get; set; } = '@';
-        public DifficultiGame Difficulti { get; set; } = DifficultiGame.Easy;
+        public DifficultiGameEnum Difficulti { get; set; } = DifficultiGameEnum.Easy;
         public ConsoleColor ColorSnake { get; set; } = ConsoleColor.White;
 
         private Direction direction = Direction.Up;
         private Direction previousDirection = Direction.Up;
 
-        public void Start()
+        public void Start(Vector2D startPoint)
         {
             ConsoleConfig config = new ConsoleConfig();
-            SnakeBody.Add(new Object("Head", new Vector2D(config.CenterX, config.CenterY), SkinSnake, ColorSnake, true));
+            SnakeBody.Add(new GameObject("Head", new Vector2D(startPoint.X, startPoint.Y), SkinSnake, ColorSnake, true));
+            SnakeBody[0].Create();
             KeyboardControl.PressKeyEvent += OnPressKey;
             KeyboardControl.KeyboardCloseEvent += OnCloseKeyboard;
         }
+
         public void Close()
         {
             Scores = 0;
             direction = Direction.Up;
             previousDirection = Direction.Up;
-            Difficulti = DifficultiGame.Easy;
+            Difficulti = DifficultiGameEnum.Easy;
             ColorSnake = ConsoleColor.White;
             SkinSnake = '@';
             for (int i=0; i<SnakeBody.Count; i++)
                 SnakeBody[i].Destroy();
-            SnakeBody = new List<Object>();
+            SnakeBody = new List<GameObject>();
             OnCloseKeyboard();
         }
+
         public bool Move()
         {
             Vector2D vecDirection = VectorDirection(direction);
@@ -55,7 +58,7 @@ namespace Snake.Game
 
         private Vector2D VectorDirection(Direction direction)
         {
-            Vector2D vectorDirection = new Vector2D();
+            Vector2D vectorDirection = new Vector2D(0, 0);
             switch (direction)
             {
                 case Direction.Up:
@@ -73,6 +76,7 @@ namespace Snake.Game
             }
             return vectorDirection;
         }
+
         private bool VeryficationDirection()
         {
             Vector2D previous = VectorDirection(previousDirection);
@@ -81,10 +85,11 @@ namespace Snake.Game
                 return false;
             return true;
         }
+
         private bool VeryficationCollision(Vector2D direction)
         {
             GameManager gm = new GameManager();
-            Object obj = gm.GetObject(SnakeBody[0].Position+ direction);
+            GameObject obj = gm.GetObject(SnakeBody[0].Position+ direction);
             if (obj == null)
                 return false;
 
@@ -98,9 +103,9 @@ namespace Snake.Game
                         {
                             obj.Destroy();
                             AddBody();
-                            if (Difficulti == DifficultiGame.Easy)
+                            if (Difficulti == DifficultiGameEnum.Easy)
                                 Scores += 5;
-                            else if (Difficulti == DifficultiGame.Medium)
+                            else if (Difficulti == DifficultiGameEnum.Medium)
                                 Scores += 10;
                             else
                                 Scores += 15;
@@ -111,11 +116,14 @@ namespace Snake.Game
 
             return false;
         }
+
         private void AddBody()
         {
             Vector2D position = SnakeBody[SnakeBody.Count - 1].Position;
-            SnakeBody.Add(new Object("Body"+(SnakeBody.Count-1), position, SkinSnake, ColorSnake, true));
+            SnakeBody.Add(new GameObject("Body"+(SnakeBody.Count-1), position, SkinSnake, ColorSnake, true));
+            SnakeBody[SnakeBody.Count-1].Create();
         }
+
         private void MoveBody()
         {
             SnakeBody[SnakeBody.Count - 1].ClearRender();
@@ -123,6 +131,7 @@ namespace Snake.Game
                 if (SnakeBody[i] != null && SnakeBody[i - 1] != null)
                     SnakeBody[i].Move(SnakeBody[i - 1].Position, true, false, false);
         }
+
         private void OnPressKey(ConsoleKey key)
         {
             switch (key)
@@ -141,6 +150,7 @@ namespace Snake.Game
                     break;
             }
         }
+
         private void OnCloseKeyboard()
         {
             KeyboardControl.PressKeyEvent -= OnPressKey;

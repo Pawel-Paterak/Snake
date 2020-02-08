@@ -1,4 +1,5 @@
 ﻿using Snake.Configurations;
+using Snake.Extensions;
 using Snake.Game.Render;
 using System;
 using System.Threading.Tasks;
@@ -10,43 +11,44 @@ namespace Snake.Controlers
         public static Action<ConsoleKey> PressKeyEvent { get; set; }
         public static Action KeyboardCloseEvent { get; set; }
 
-        private bool WaitForKey { get; set; } = false;
-        private bool IsRunning { get; set; } = false;
-        private Task LoopTask { get; set; }
+        private bool waitForKey;
+        private bool isRunning;
+        private Task loopTask;
 
         public void Start()
         {
-            if(!IsRunning)
+            if(!isRunning)
             {
-                IsRunning = true;
-                LoopTask = new Task(Loop);
-                LoopTask.Start();
+                isRunning = true;
+                loopTask = new Task(Loop);
+                loopTask.Start();
             }
         }
+
         public void Close()
         {
-            IsRunning = false;
+            isRunning = false;
 
             ConsoleRender render = new ConsoleRender();
             ConsoleConfig config = new ConsoleConfig();
             string text = "Press key to close";
-            int offsetText = text.Length / 2;
+            int offsetText = text.HalfLength();
             render.Clear();
-            render.Write(text, config.Widht / 2 - offsetText, config.Height / 2);
+            render.Write(text, config.CenterX - offsetText, config.CenterY);
 
-            LoopTask.Wait(-1);
-            LoopTask.Dispose();
+            loopTask.Wait(-1);
+            loopTask.Dispose();
         }
 
         private void Loop()
         {
             do
             {
-                WaitForKey = true;
+                waitForKey = true;
                 ConsoleKeyInfo keyInfo = Console.ReadKey(true);
                 PressKeyEvent?.Invoke(keyInfo.Key);
-                WaitForKey = false;
-            } while (IsRunning);
+                waitForKey = false;
+            } while (isRunning);
             KeyboardCloseEvent?.Invoke();
         }
     }

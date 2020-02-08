@@ -33,11 +33,11 @@ namespace Snake.Game.Menu
         }
         private ICanvas activeCanvas;
         private int optionChoose = 0;
-        private bool IsRenderCanvas { get; set; } = false;
-        private OptionChoose[] OptionsChosseX { get; set; }
-        private Dictionary<CanvasEnum, ICanvas> Canvas { get; set; } = new Dictionary<CanvasEnum, ICanvas>();
-        private GameManager Game { get; set; }
-        private ConsoleRender Render { get; set; } = new ConsoleRender();
+        private bool isRenderCanvas;
+        private OptionChoose[] optionsChosseX;
+        private Dictionary<CanvasEnum, ICanvas> canvas = new Dictionary<CanvasEnum, ICanvas>();
+        private GameManager game;
+        private ConsoleRender render = new ConsoleRender();
 
         public static MenuManager Singleton { get; set; }
 
@@ -45,31 +45,36 @@ namespace Snake.Game.Menu
         {
 
         }
+
         public MenuManager(GameManager game)
         {
             if (Singleton == null)
                 Singleton = this;
 
             InitializeCanvas();
+            GameConfig config = new GameConfig();
+            optionsChosseX = new OptionChoose[4];
+            optionsChosseX[0] = new OptionChoose(0, config.CountColors);
+            optionsChosseX[1] = new OptionChoose(0, config.CountSkins);
+            optionsChosseX[2] = new OptionChoose(0, config.CountMap);
+            optionsChosseX[3] = new OptionChoose(0, config.CountDifficulti);
 
-            OptionsChosseX = new OptionChoose[2];
-            OptionsChosseX[0] = new OptionChoose(0, GameConfig.CountColors);
-            OptionsChosseX[1] = new OptionChoose(0, GameConfig.CountSkins);
-
-            Game = game;
+            this.game = game;
         }
+
         public void RenderCanvas(CanvasEnum canvas)
         {
             KeyboardControl.PressKeyEvent += OnPressKey;
 
             ActiveCanvas = canvas;
-            IsRenderCanvas = true;
+            isRenderCanvas = true;
             do
-            {}
-            while (IsRenderCanvas);
+            { }
+            while (isRenderCanvas);
 
             KeyboardControl.PressKeyEvent -= OnPressKey;
         }
+
         public void MainMenu()
         {
             switch ((MainMenuEnum)Singleton.OptionChoose)
@@ -95,42 +100,7 @@ namespace Snake.Game.Menu
                     }
             }
         }
-        public void LevelsMenu()
-        {
-            switch ((LevelsEnum)Singleton.OptionChoose)
-            {
-                case LevelsEnum.Easy:
-                    {
-                        Game.Snake.Difficulti = DifficultiGame.Easy;
-                        Game.RefreshTime = 80;
-                        IsRenderCanvas = false;
-                        break;
-                    }
-                case LevelsEnum.Medium:
-                    {
-                        Game.Snake.Difficulti = DifficultiGame.Medium;
-                        Game.RefreshTime = 50;
-                        IsRenderCanvas = false;
-                        break;
-                    }
-                case LevelsEnum.Hard:
-                    {
-                        Game.Snake.Difficulti = DifficultiGame.Hard;
-                        Game.RefreshTime = 28;
-                        IsRenderCanvas = false;
-                        break;
-                    }
-                case LevelsEnum.Back:
-                    {
-                        ActiveCanvas = CanvasEnum.CustomsSnake;
-                        break;
-                    }
-                default:
-                    {
-                        break;
-                    }
-            }
-        }
+
         public void CustomsSnakeMenu()
         {
             switch ((CustomsSnakeEnum)Singleton.OptionChoose)
@@ -138,9 +108,9 @@ namespace Snake.Game.Menu
                 case CustomsSnakeEnum.play:
                     {
                         GameConfig config = new GameConfig();
-                        Game.Snake.ColorSnake = config.ColorsSnake[GetChooseColor()];
-                        Game.Snake.SkinSnake = config.SkinsSnake[GetChooseSkins()];
-                        ActiveCanvas = CanvasEnum.Levels;
+                        game.Snake.ColorSnake = config.ColorsSnake[GetChooseColor()];
+                        game.Snake.SkinSnake = config.SkinsSnake[GetChooseSkins()];
+                        ActiveCanvas = CanvasEnum.GameSettings;
                         break;
                     }
                 case CustomsSnakeEnum.back:
@@ -154,6 +124,38 @@ namespace Snake.Game.Menu
                     }
             }
         }
+
+        public void GameSettingsMenu()
+        {
+            switch ((GameSettingsEnum)Singleton.OptionChoose)
+            {
+                case GameSettingsEnum.Play:
+                    {
+                        GameConfig gameConfig = new GameConfig();
+                        DifficultiGameEnum difficulti = gameConfig.Difficulti[GetChooseDifficulti()];
+                        game.Snake.Difficulti = difficulti;
+                        int refreshFrame = 28;
+                        if (difficulti == DifficultiGameEnum.Easy)
+                            refreshFrame = 80;
+                        else if (difficulti == DifficultiGameEnum.Medium)
+                            refreshFrame = 50;
+                        game.RefreshTime = refreshFrame;
+                        game.Map = gameConfig.Maps[GetChooseMap()];
+                        isRenderCanvas = false;
+                        break;
+                    }
+                case GameSettingsEnum.Back:
+                    {
+                        ActiveCanvas = CanvasEnum.CustomsSnake;
+                        break;
+                    }
+                default:
+                    {
+                        break;
+                    }
+            }
+        }
+
         public void ScoresMenu()
         {
             switch ((ScoresEnum)Singleton.OptionChoose)
@@ -169,56 +171,69 @@ namespace Snake.Game.Menu
                     }
             }
         }
+
         public void GameOverMenu(int scores)
         {
             string text = "GameOver, you scores " + scores;
             ConsoleConfig console = new ConsoleConfig();
-            Game.WaitForPlayerName = true;
+            game.WaitForPlayerName = true;
             string nameRender = "";
             bool firstTime = true;
             do
             {
-                if (Game.Name != nameRender || firstTime)
+                if (game.Name != nameRender || firstTime)
                 {
                     firstTime = false;
-                    nameRender = Game.Name;
-                    Render.Clear();
-                    Render.Write(text, console.Widht / 2 - text.Length / 2, console.Height / 2);
-                    Render.Write(nameRender, console.Widht / 2 - nameRender.Length / 2, console.Height / 2 + 2);
+                    nameRender = game.Name;
+                    render.Clear();
+                    render.Write(text, console.Widht / 2 - text.Length / 2, console.Height / 2);
+                    render.Write(nameRender, console.Widht / 2 - nameRender.Length / 2, console.Height / 2 + 2);
                 }
-            } while (Game.WaitForPlayerName);
+            } while (game.WaitForPlayerName);
         }
+
         public int GetOptionChoose()
             => Singleton.OptionChoose;
+
         public int GetChooseColor()
-         => Singleton.OptionsChosseX[0].Option;
+         => Singleton.optionsChosseX[0].Option;
+
         public int GetChooseSkins()
-         => Singleton.OptionsChosseX[1].Option;
+         => Singleton.optionsChosseX[1].Option;
+
+        public int GetChooseMap()
+         => Singleton.optionsChosseX[2].Option;
+
+        public int GetChooseDifficulti()
+         => Singleton.optionsChosseX[3].Option;
 
         private void SetCanvas(CanvasEnum canvas)
         {
-            if (this.Canvas.ContainsKey(canvas))
+            if (this.canvas.ContainsKey(canvas))
             {
-                activeCanvas = this.Canvas[canvas];
+                activeCanvas = this.canvas[canvas];
                 activeCanvas.Render?.Invoke();
             }
         }
+
         private void CloseConsole()
         {
             Core.Closing = true;
-            IsRenderCanvas = false;
+            isRenderCanvas = false;
         }
+
         private void InitializeCanvas()
         {
             MainMenuCanvas mainMenu = new MainMenuCanvas();
-            Canvas.Add(mainMenu.Canvas, mainMenu);
+            canvas.Add(mainMenu.Canvas, mainMenu);
             ScoresCanvas scores = new ScoresCanvas();
-            Canvas.Add(scores.Canvas, scores);
+            canvas.Add(scores.Canvas, scores);
             CustomsSnakeCanvas customsSnake = new CustomsSnakeCanvas();
-            Canvas.Add(customsSnake.Canvas, customsSnake);
-            LevelsCanvas levels = new LevelsCanvas();
-            Canvas.Add(levels.Canvas, levels);
+            canvas.Add(customsSnake.Canvas, customsSnake);
+            GameSettingsCanvas levels = new GameSettingsCanvas();
+            canvas.Add(levels.Canvas, levels);
         }
+
         private void OnPressKey(ConsoleKey key)
         {
             if (key == ConsoleKey.Enter)
@@ -232,25 +247,29 @@ namespace Snake.Game.Menu
             if (key == ConsoleKey.S || key == ConsoleKey.DownArrow)
                 OptionChoose++;
 
-            if(ActiveCanvas == CanvasEnum.CustomsSnake)
+            if (key == ConsoleKey.A || key == ConsoleKey.LeftArrow)
             {
-                if (key == ConsoleKey.A || key == ConsoleKey.LeftArrow)
+                if (optionChoose == 0 || optionChoose == 1)
                 {
-                    if (optionChoose == 0 || optionChoose == 1)
-                    {
-                        OptionsChosseX[optionChoose].Option--;
-                        activeCanvas.Render?.Invoke();
-                    }
-                }
-                if (key == ConsoleKey.D || key == ConsoleKey.RightArrow)
-                {
-                    if (optionChoose == 0 || optionChoose == 1)
-                    {
-                        OptionsChosseX[optionChoose].Option++;
-                        activeCanvas.Render?.Invoke();
-                    }
+                    if (ActiveCanvas == CanvasEnum.GameSettings)
+                        optionsChosseX[optionChoose + 2].Option--;
+                    else
+                        optionsChosseX[optionChoose].Option--;
+                    activeCanvas.Render?.Invoke();
                 }
             }
+            if (key == ConsoleKey.D || key == ConsoleKey.RightArrow)
+            {
+                if (optionChoose == 0 || optionChoose == 1)
+                {
+                    if (ActiveCanvas == CanvasEnum.GameSettings)
+                        optionsChosseX[optionChoose + 2].Option++;
+                    else
+                        optionsChosseX[optionChoose].Option++;
+                    activeCanvas.Render?.Invoke();
+                }
+            }
+
         }
     }
 }

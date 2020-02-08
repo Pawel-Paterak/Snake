@@ -36,14 +36,17 @@ namespace Snake
                     StartGame();
             } while (!Closing);
         }
+
         private void MainMenu()
             => menu.RenderCanvas(CanvasEnum.MainMenu);
+
         private void StartGame()
             =>   game.Start();
+
         private void Veryfications()
         {
             JsonManager jManager = new JsonManager();
-            if(!jManager.Exists(GameConfig.ScoresFile))
+            if(!jManager.FileExists(GameConfig.ScoresFile))
                 jManager.Write(GameConfig.ScoresFile, new ScoresFile(new List<Score>()));
         }
     }

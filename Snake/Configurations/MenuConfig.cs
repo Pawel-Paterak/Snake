@@ -4,18 +4,18 @@
     {
         public int CountMenuOptions { get => MenuOptions.Length; }
         public int CountCustomsSnakeOptions { get => CustomsSnakeOptions.Length; }
-        public int CountLevelOptions { get => LevelsOptions.Length; }
+        public int CountLevelOptions { get => GameSettingsOptions.Length; }
         public int CountScoreOptions { get; private set; } = 1;
         public string[] MenuOptions { get; private set; }
         public string[] CustomsSnakeOptions { get; private set; }
-        public string[] LevelsOptions { get; private set; }
+        public string[] GameSettingsOptions { get; private set; }
         public string ScoreOption { get; private set; } = "Back";
 
         public MenuConfig()
         {
             InitializeMenu();
             InitializeCustomsSnake();
-            InitializeLevels();
+            InitializeGameSettings();
         }
 
         private void InitializeMenu()
@@ -26,21 +26,23 @@
             MenuOptions[2] = "Scores";
             MenuOptions[3] = "Exit";
         }
+
         private void InitializeCustomsSnake()
         {
             CustomsSnakeOptions = new string[4];
             CustomsSnakeOptions[0] = "Color";
             CustomsSnakeOptions[1] = "Skin";
-            CustomsSnakeOptions[2] = "Play";
+            CustomsSnakeOptions[2] = "Next";
             CustomsSnakeOptions[3] = "Back";
         }
-        private void InitializeLevels()
+
+        private void InitializeGameSettings()
         {
-            LevelsOptions = new string[4];
-            LevelsOptions[0] = "Easy";
-            LevelsOptions[1] = "Medium";
-            LevelsOptions[2] = "Hard";
-            LevelsOptions[3] = "Back";
+            GameSettingsOptions = new string[4];
+            GameSettingsOptions[0] = "Map";
+            GameSettingsOptions[1] = "Difficulti";
+            GameSettingsOptions[2] = "Play";
+            GameSettingsOptions[3] = "Back";
         }
     }
 }

@@ -51,15 +51,16 @@
     <Compile Include="Controlers\KeyboardControl.cs" />
     <Compile Include="Core.cs" />
     <Compile Include="Extensions\StringExtension.cs" />
+    <Compile Include="Files\MapFile.cs" />
     <Compile Include="Game\Direction.cs" />
     <Compile Include="Files\Json\JsonManager.cs" />
     <Compile Include="Game\Score.cs" />
     <Compile Include="Files\ScoresFile.cs" />
     <Compile Include="Configurations\GameConfig.cs" />
     <Compile Include="Game\Enums\CustomsSnakeEnum.cs" />
-    <Compile Include="Game\Enums\DifficultiGame.cs" />
+    <Compile Include="Game\Enums\DifficultiGameEnum.cs" />
     <Compile Include="Game\Enums\CanvasEnum.cs" />
-    <Compile Include="Game\Enums\LevelsEnum.cs" />
+    <Compile Include="Game\Enums\GameSettingsEnum.cs" />
     <Compile Include="Game\Enums\MainMenuEnum.cs" />
     <Compile Include="Game\Enums\ScoresEnum.cs" />
     <Compile Include="Game\GameManager.cs" />
@@ -70,7 +71,7 @@
     <Compile Include="Game\Menu\Interface\ICanvas.cs" />
     <Compile Include="Game\Menu\MenuManager.cs" />
     <Compile Include="Game\Menu\OptionChoose.cs" />
-    <Compile Include="Game\Object.cs" />
+    <Compile Include="Game\GameObject.cs" />
     <Compile Include="Game\Render\ConsoleRender.cs" />
     <Compile Include="Game\Render\MenuRender.cs" />
     <Compile Include="Game\Snake.cs" />

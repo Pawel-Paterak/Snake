@@ -17,10 +17,6 @@
 
         private int option = 0;
 
-        public OptionChoose()
-        {
-
-        }
         public OptionChoose(int option, int countOption)
         {
             Option = option;
