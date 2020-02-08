@@ -1,4 +1,5 @@
-﻿using Snake.Game.Render;
+﻿using Snake.Game.Enums;
+using Snake.Game.Render;
 using System;
 
 namespace Snake.Game
@@ -8,17 +9,19 @@ namespace Snake.Game
         public string Name { get; set; }
         public Vector2D Position { get; private set; }
         public ConsoleColor Color { get; set; }
+        public GameObjectTagEnum Tag { get; private set; }
         public char CharRender { get; set; }
         public bool Collision { get; set; }
 
         private readonly ConsoleRender render = new ConsoleRender();
 
-        public GameObject(string name, Vector2D position, char charRender, ConsoleColor color, bool collision)
+        public GameObject(string name, Vector2D position, char charRender, ConsoleColor color, GameObjectTagEnum tag, bool collision)
         {
             Name = name;
             Position = position;
             CharRender = charRender;
             Color = color;
+            Tag = tag;
             Collision = collision;
         }
 
