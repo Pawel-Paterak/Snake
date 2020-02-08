@@ -30,12 +30,13 @@ namespace Snake.Game.Render
                 Render.Write(text, widht - text.HalfLength(), height + 2 * i);
             }
         }
+
         public void CustomsSnakeMenuRender()
         {
             Render.Clear();
             ConsoleConfig config = new ConsoleConfig();
-            GameConfig gameConfig = new GameConfig();
             MenuManager menuManager = new MenuManager();
+            GameConfig gameConfig = new GameConfig();
             Frame();
             int widht = config.CenterX;
             int height = config.CenterY - (Config.CustomsSnakeOptions.Length + 2) / 2;
@@ -66,12 +67,13 @@ namespace Snake.Game.Render
                 Render.Write(text, widht - text.HalfLength(), textHeigth);
             }
         }
+
         public void GameSettingsMenuRender()
         {
             Render.Clear();
             ConsoleConfig config = new ConsoleConfig();
-            GameConfig gameConfig = new GameConfig();
             MenuManager menuManager = new MenuManager();
+            GameConfig gameConfig = new GameConfig();
             Frame();
             int widht = config.CenterX;
             int height = config.CenterY - Config.GameSettingsOptions.HalfLength();
@@ -102,6 +104,7 @@ namespace Snake.Game.Render
                 Render.Write(text, widht - text.HalfLength(), textHeigth);
             }
         }
+
         public void ScoresMenuRender()
         {
             Render.Clear();
@@ -123,6 +126,7 @@ namespace Snake.Game.Render
 
             Render.Write("> "+Config.ScoreOption+" <", 2, 36);
         }
+
         public void Frame()
         {
             ConsoleConfig console = new ConsoleConfig();
@@ -156,6 +160,7 @@ namespace Snake.Game.Render
 
             return text;
         }
+
         private string RenderCustomsColorOption(int choose)
         {
             GameConfig gameConfig = new GameConfig();
@@ -173,6 +178,7 @@ namespace Snake.Game.Render
 
             return text;
         }
+
         private string RenderGameSettingsDifficultiOption(int choose)
         {
             GameConfig gameConfig = new GameConfig();
@@ -190,6 +196,7 @@ namespace Snake.Game.Render
 
             return text;
         }
+
         private string RenderGameSettingsMapOption(int choose)
         {
             GameConfig gameConfig = new GameConfig();

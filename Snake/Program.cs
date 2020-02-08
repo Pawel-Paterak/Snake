@@ -8,6 +8,7 @@ namespace Snake
         {
             ConsoleConfig consoleConfiguration = new ConsoleConfig();
             consoleConfiguration.Configuration();
+
             Core core = new Core();
             core.Start();
         }

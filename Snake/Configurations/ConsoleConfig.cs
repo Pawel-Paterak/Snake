@@ -18,18 +18,22 @@ namespace Snake.Configurations
             Resize(Widht, Height);
             CursorVisible(cursorVisible);
         }
+
         public void Resize(int widht, int height)
         {
             Console.SetWindowSize(widht, height);
             Console.SetBufferSize(widht, height);
         }
+
         public int GetBufferX()
             => Console.BufferWidth;
+
         public int GetBufferY()
             => Console.BufferHeight;
 
         private void WindowTitle(string title)
           => Console.Title = title;
+
         private void CursorVisible(bool visible)
             => Console.CursorVisible = visible;
     }

@@ -8,13 +8,9 @@ namespace Snake.Files
         public string Name { get; set; }
         public Vector2D Size { get; set; }
         public Vector2D StartPoint { get; set; }
-        public List<Object> Objects { get; set; }
+        public List<GameObject> Objects { get; set; }
 
-        public MapFile()
-        {
-
-        }
-        public MapFile(string name, Vector2D size, Vector2D startPoint, List<Object> objects)
+        public MapFile(string name, Vector2D size, Vector2D startPoint, List<GameObject> objects)
         {
             Name = name;
             Size = size;

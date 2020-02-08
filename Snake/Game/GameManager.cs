@@ -13,14 +13,14 @@ namespace Snake.Game
     public class GameManager
     {
         public int RefreshTime { get; set; } = 50;
-        public string Name { get; private set; } = "";
-        public bool WaitForPlayerName { get; set; } = false;
+        public string Name { get; private set; }
+        public bool WaitForPlayerName { get; set; }
         public Snake Snake { get; private set; } = new Snake();
         public MapFile Map { get; set; }
 
         private readonly ConsoleRender render = new ConsoleRender();
-        private List<Object> objects = new List<Object>();
-        private static GameManager Singleton { get; set; }
+        private List<GameObject> objects = new List<GameObject>();
+        private static GameManager Singleton;
 
         public GameManager()
         {
@@ -36,16 +36,19 @@ namespace Snake.Game
             AddWalls();
             Loop();
         }
-        public void AddObject(Object obj)
+
+        public void AddObject(GameObject obj)
            => Singleton.objects.Add(obj);
-        public Object GetObject(Vector2D position)
+
+        public GameObject GetObject(Vector2D position)
         {
-            foreach (Object obj in Singleton.objects)
+            foreach (GameObject obj in Singleton.objects)
                 if (obj.Position == position)
                     return obj;
             return null;
         }
-        public void RemoveObject(Object obj)
+
+        public void RemoveObject(GameObject obj)
             => Singleton.objects.Remove(obj);
 
         private void AddScoreToTable(Score score)
@@ -58,27 +61,34 @@ namespace Snake.Game
                 json.Write(GameConfig.ScoresFile, scoresFile);
             }
         }
+
         private void AddWalls()
         {
             ConsoleConfig config = new ConsoleConfig();
             for (int x = 0; x < config.GetBufferX(); x++)
             {
-                Object wallUp = new Object("Wall", new Vector2D(x, 0), '#', ConsoleColor.White, true);
-                Object wallDown = new Object("Wall", new Vector2D(x, config.GetBufferY() - 2), '#', ConsoleColor.White, true);
+                GameObject wallUp = new GameObject("Wall", new Vector2D(x, 0), '#', ConsoleColor.White, true);
+                GameObject wallDown = new GameObject("Wall", new Vector2D(x, config.GetBufferY() - 2), '#', ConsoleColor.White, true);
+                wallUp.Create();
+                wallDown.Create();
             }
             for (int y = 0; y < config.GetBufferY() - 1; y++)
             {
-                Object wallLeft = new Object("Wall", new Vector2D(0, y), '#', ConsoleColor.White, true);
-                Object wallRight = new Object("Wall", new Vector2D(config.GetBufferX() - 1, y), '#', ConsoleColor.White, true);
+                GameObject wallLeft = new GameObject("Wall", new Vector2D(0, y), '#', ConsoleColor.White, true);
+                GameObject wallRight = new GameObject("Wall", new Vector2D(config.GetBufferX() - 1, y), '#', ConsoleColor.White, true);
+                wallLeft.Create();
+                wallRight.Create();
             }
         }
-        private Object FindObject(string name)
+
+        private GameObject FindObject(string name)
         {
-            foreach (Object coor in objects)
+            foreach (GameObject coor in objects)
                 if (coor.Name == name)
                     return coor;
             return null;
         }
+
         private void GameOver()
         {
             ConsoleConfig config = new ConsoleConfig();
@@ -89,6 +99,7 @@ namespace Snake.Game
             Score score = new Score(scores, Name);
             AddScoreToTable(score);
         }
+
         private void GenerateApple()
         {
             ConsoleConfig config = new ConsoleConfig();
@@ -103,15 +114,18 @@ namespace Snake.Game
                 if (GetObject(new Vector2D(x, y)) == null)
                     isLoop = false;
             } while (isLoop);
-            Object apple = new Object("Apple", new Vector2D(x, y), '@', ConsoleColor.Red, false);
+            GameObject apple = new GameObject("Apple", new Vector2D(x, y), '@', ConsoleColor.Red, false);
+            apple.Create();
         }
+
         private void GameOverDispose()
         {
             Snake.Close();
             for (int i = 0; i < objects.Count; i++)
                 objects[i].Destroy();
-            objects = new List<Object>();
+            objects = new List<GameObject>();
         }
+
         private void GameOverGetName(int scores)
         {
             KeyboardControl.PressKeyEvent += OnPressKey;
@@ -122,12 +136,15 @@ namespace Snake.Game
             KeyboardControl.PressKeyEvent -= OnPressKey;
             KeyboardControl.KeyboardCloseEvent -= OnClosingKeyboard;
         }
+
         private void InitializeMap()
         {
-            ConsoleConfig config = new ConsoleConfig();
-            config.Resize(Map.Size.X, Map.Size.Y);
-            objects.AddRange(Map.Objects);
+           ConsoleConfig config = new ConsoleConfig();
+           config.Resize(Map.Size.X, Map.Size.Y);
+            foreach (GameObject obj in Map.Objects)
+                obj.Create();
         }
+
         private void Loop()
         {
             render.Clear();
@@ -140,10 +157,12 @@ namespace Snake.Game
                 bool isMove = Snake.Move();
                 if(!isMove)
                     isRunning = false;
+                Render(false);
                 Thread.Sleep(RefreshTime);
             } while (isRunning);
             GameOver();
         }
+
         private void OnPressKey(ConsoleKey key)
         {
             if (WaitForPlayerName)
@@ -170,17 +189,24 @@ namespace Snake.Game
                 }
             }
         }
+
         private void OnClosingKeyboard()
         {
             KeyboardControl.PressKeyEvent -= OnPressKey;
             KeyboardControl.KeyboardCloseEvent -= OnClosingKeyboard;
         }
-        private void Render()
+
+        private void Render(bool collisionRender = true)
         {
-            foreach(Object obj in objects)
+            foreach(GameObject obj in objects)
             {
-                if(obj.CharRender != ' ')
-                    render.Write(obj.CharRender+"", obj.Color, obj.Position.X, obj.Position.Y);
+                if (obj.CharRender != ' ')
+                {
+                    if(!collisionRender == !obj.Collision)
+                        obj.Render();
+                    else if(collisionRender)
+                        obj.Render();
+                }
             }
         }
     }

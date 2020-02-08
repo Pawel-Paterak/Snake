@@ -3,39 +3,45 @@ using System;
 
 namespace Snake.Game
 {
-    public class Object
+    public class GameObject
     {
-        public string Name { get; set; } = "Default";
-        public Vector2D Position { get; private set; } = new Vector2D(0, 0);
-        public ConsoleColor Color { get; set; } = ConsoleColor.White;
-        public char CharRender { get; set; } = ' ';
-        public bool Collision { get; set; } = false;
+        public string Name { get; set; }
+        public Vector2D Position { get; private set; }
+        public ConsoleColor Color { get; set; }
+        public char CharRender { get; set; }
+        public bool Collision { get; set; }
 
         private readonly ConsoleRender render = new ConsoleRender();
 
-        public Object()
-        {
-            Instantiate();
-        }
-        public Object(string name, Vector2D position, char charRender, ConsoleColor color, bool collision)
+        public GameObject(string name, Vector2D position, char charRender, ConsoleColor color, bool collision)
         {
             Name = name;
             Position = position;
             CharRender = charRender;
             Color = color;
             Collision = collision;
-            Instantiate();
         }
+
         public void Destroy()
         {
             ClearRender();
             GameManager gm = new GameManager();
             gm.RemoveObject(this);
         }
+
+        public void Create()
+        {
+            Render();
+            GameManager gm = new GameManager();
+            gm.AddObject(this);
+        }
+
         public void Move(Vector2D position, bool isOffset)
            => Move(position, true, true, isOffset);
+
         public void Move(Vector2D position, bool render, bool isOffset)
            => Move(position, render, render, isOffset);
+
         public void Move(Vector2D position, bool render = true, bool clear = true, bool isOffset = false)
         {
             if (clear)
@@ -49,16 +55,11 @@ namespace Snake.Game
             if (render)
                 Render();
         }
+
         public void Render()
            => render.Write(CharRender.ToString(), Color, Position.X, Position.Y);
+
         public void ClearRender()
             => render.Write(" ", Position.X, Position.Y);
-
-        private void Instantiate()
-        {
-            Render();
-            GameManager gm = new GameManager();
-            gm.AddObject(this);
-        }
     }
 }

@@ -8,14 +8,11 @@ namespace Snake.Files
         public int MaxSlots { get; private set; } = 17;
         public List<Score> Scores { get; set; } = new List<Score>();
 
-        public ScoresFile()
-        {
-
-        }
         public ScoresFile(List<Score> scores)
         {
             Scores = scores;
         }
+
         public void AddScores(Score score)
         {
             VeryficationLenghtScores();
@@ -46,6 +43,7 @@ namespace Snake.Files
                     Scores.Add(new Score(0, ""));
             }
         }
+
         private void AddScoreToTable(Score score, int index)
         {
                 int countScores = Scores.Count;

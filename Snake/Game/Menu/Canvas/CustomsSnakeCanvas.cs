@@ -14,7 +14,6 @@ namespace Snake.Game.Menu.Canvas
 
         public CustomsSnakeCanvas()
         {
-
             Canvas = CanvasEnum.CustomsSnake;
             CountOption = 4;
             MenuRender menuRender = new MenuRender();

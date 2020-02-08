@@ -26,6 +26,7 @@
             MenuOptions[2] = "Scores";
             MenuOptions[3] = "Exit";
         }
+
         private void InitializeCustomsSnake()
         {
             CustomsSnakeOptions = new string[4];
@@ -34,6 +35,7 @@
             CustomsSnakeOptions[2] = "Next";
             CustomsSnakeOptions[3] = "Back";
         }
+
         private void InitializeGameSettings()
         {
             GameSettingsOptions = new string[4];

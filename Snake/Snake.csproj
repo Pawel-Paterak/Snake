@@ -71,7 +71,7 @@
     <Compile Include="Game\Menu\Interface\ICanvas.cs" />
     <Compile Include="Game\Menu\MenuManager.cs" />
     <Compile Include="Game\Menu\OptionChoose.cs" />
-    <Compile Include="Game\Object.cs" />
+    <Compile Include="Game\GameObject.cs" />
     <Compile Include="Game\Render\ConsoleRender.cs" />
     <Compile Include="Game\Render\MenuRender.cs" />
     <Compile Include="Game\Snake.cs" />

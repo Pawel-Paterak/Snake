@@ -27,6 +27,7 @@ namespace Snake.Files.Json
                 Console.ReadKey();
             }
         }
+
         public T Read<T>(string path)
         {
             T temp = default(T);
@@ -48,14 +49,19 @@ namespace Snake.Files.Json
             }
             return temp;
         }
+
         public bool DirectoryExists(string path)
             => Directory.Exists(path);
+
         public bool FileExists(string path)
             => File.Exists(path);
+
         public string[] GetFiles(string path)
             => Directory.GetFiles(path);
+
         public string[] GetJsonFiles(string path)
            => GetJsonFiles(GetFiles(path));
+
         public string[] GetJsonFiles(string[] files)
         {
             List<string> jsonFiles = new List<string>();

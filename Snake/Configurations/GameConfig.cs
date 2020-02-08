@@ -22,6 +22,11 @@ namespace Snake.Configurations
 
         public GameConfig()
         {
+            Initialize();
+        }
+
+        public void Initialize()
+        {
             InitializeColors();
             InitializeDifficulti();
             InitializeSkins();
@@ -40,6 +45,7 @@ namespace Snake.Configurations
             ColorsSnake[6] = ConsoleColor.Blue;
             ColorsSnake[7] = ConsoleColor.Magenta;
         }
+
         private void InitializeDifficulti()
         {
             Difficulti = new DifficultiGameEnum[3];
@@ -47,6 +53,7 @@ namespace Snake.Configurations
             Difficulti[1] = DifficultiGameEnum.Medium;
             Difficulti[2] = DifficultiGameEnum.Hard;
         }
+
         private void InitializeSkins()
         {
             SkinsSnake = new char[8];
@@ -59,6 +66,7 @@ namespace Snake.Configurations
             SkinsSnake[6] = 'x';
             SkinsSnake[7] = 'a';
         }
+
         private void InitializeMaps()
         {
             JsonManager jsonManager = new JsonManager();
