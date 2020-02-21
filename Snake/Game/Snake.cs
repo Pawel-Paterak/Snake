@@ -20,7 +20,7 @@ namespace Snake.Game
         public void Start(Vector2D startPoint)
         {
             ConsoleConfig config = new ConsoleConfig();
-            SnakeBody.Add(new GameObject("Head", new Vector2D(startPoint.X, startPoint.Y), SkinSnake, ColorSnake, true));
+            SnakeBody.Add(new GameObject("Head", new Vector2D(startPoint.X, startPoint.Y), SkinSnake, ColorSnake, GameObjectTagEnum.Object, true));
             SnakeBody[0].Create();
             KeyboardControl.PressKeyEvent += OnPressKey;
             KeyboardControl.KeyboardCloseEvent += OnCloseKeyboard;
@@ -112,6 +112,28 @@ namespace Snake.Game
                             break;
                         }
                 }
+
+                switch(obj.Tag)
+                {
+                    case GameObjectTagEnum.Teleport:
+                        {
+                            string name = obj.Name;
+
+                            int startTeleportFrom = name.IndexOf(';')+1;
+                            int startTeleportTo = name.IndexOf(';', startTeleportFrom) +1;
+
+                            string teleportNumberFrom = name.Substring(startTeleportFrom, startTeleportTo - startTeleportFrom - 1);
+                            string teleportNumberTo = name.Substring(startTeleportTo, name.Length- startTeleportTo);
+
+                            int.TryParse(teleportNumberFrom, out int teleportFromNumber);
+                            int.TryParse(teleportNumberTo, out int teleportToNumber);
+
+                            GameObject teleport = gm.FindObject("Teleport;"+ teleportToNumber + ";"+ teleportFromNumber);
+                            if (teleport != null)
+                                SnakeBody[0].Move(teleport.Position, false);
+                            break;
+                        }
+                }
             }
 
             return false;
@@ -120,7 +142,7 @@ namespace Snake.Game
         private void AddBody()
         {
             Vector2D position = SnakeBody[SnakeBody.Count - 1].Position;
-            SnakeBody.Add(new GameObject("Body"+(SnakeBody.Count-1), position, SkinSnake, ColorSnake, true));
+            SnakeBody.Add(new GameObject("Body"+(SnakeBody.Count-1), position, SkinSnake, ColorSnake, GameObjectTagEnum.Object, true));
             SnakeBody[SnakeBody.Count-1].Create();
         }
 

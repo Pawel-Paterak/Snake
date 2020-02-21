@@ -54,6 +54,7 @@
     <Compile Include="Files\MapFile.cs" />
     <Compile Include="Game\Direction.cs" />
     <Compile Include="Files\Json\JsonManager.cs" />
+    <Compile Include="Game\Enums\GameObjectTagEnum.cs" />
     <Compile Include="Game\Score.cs" />
     <Compile Include="Files\ScoresFile.cs" />
     <Compile Include="Configurations\GameConfig.cs" />

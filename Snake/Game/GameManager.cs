@@ -4,6 +4,7 @@ using Snake.Files;
 using Snake.Files.Json;
 using Snake.Game.Menu;
 using Snake.Game.Render;
+using Snake.Game.Enums;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -51,6 +52,14 @@ namespace Snake.Game
         public void RemoveObject(GameObject obj)
             => Singleton.objects.Remove(obj);
 
+        public GameObject FindObject(string name)
+        {
+            foreach (GameObject coor in Singleton.objects)
+                if (coor.Name == name)
+                    return coor;
+            return null;
+        }
+
         private void AddScoreToTable(Score score)
         {
             JsonManager json = new JsonManager();
@@ -67,26 +76,18 @@ namespace Snake.Game
             ConsoleConfig config = new ConsoleConfig();
             for (int x = 0; x < config.GetBufferX(); x++)
             {
-                GameObject wallUp = new GameObject("Wall", new Vector2D(x, 0), '#', ConsoleColor.White, true);
-                GameObject wallDown = new GameObject("Wall", new Vector2D(x, config.GetBufferY() - 2), '#', ConsoleColor.White, true);
+                GameObject wallUp = new GameObject("Wall", new Vector2D(x, 0), '#', ConsoleColor.White, GameObjectTagEnum.Object, true);
+                GameObject wallDown = new GameObject("Wall", new Vector2D(x, config.GetBufferY() - 2), '#', ConsoleColor.White, GameObjectTagEnum.Object, true);
                 wallUp.Create();
                 wallDown.Create();
             }
             for (int y = 0; y < config.GetBufferY() - 1; y++)
             {
-                GameObject wallLeft = new GameObject("Wall", new Vector2D(0, y), '#', ConsoleColor.White, true);
-                GameObject wallRight = new GameObject("Wall", new Vector2D(config.GetBufferX() - 1, y), '#', ConsoleColor.White, true);
+                GameObject wallLeft = new GameObject("Wall", new Vector2D(0, y), '#', ConsoleColor.White, GameObjectTagEnum.Object, true);
+                GameObject wallRight = new GameObject("Wall", new Vector2D(config.GetBufferX() - 1, y), '#', ConsoleColor.White, GameObjectTagEnum.Object, true);
                 wallLeft.Create();
                 wallRight.Create();
             }
-        }
-
-        private GameObject FindObject(string name)
-        {
-            foreach (GameObject coor in objects)
-                if (coor.Name == name)
-                    return coor;
-            return null;
         }
 
         private void GameOver()
@@ -114,7 +115,7 @@ namespace Snake.Game
                 if (GetObject(new Vector2D(x, y)) == null)
                     isLoop = false;
             } while (isLoop);
-            GameObject apple = new GameObject("Apple", new Vector2D(x, y), '@', ConsoleColor.Red, false);
+            GameObject apple = new GameObject("Apple", new Vector2D(x, y), '@', ConsoleColor.Red, GameObjectTagEnum.Object, false);
             apple.Create();
         }
 
