@@ -1,4 +1,5 @@
 ﻿using Snake.Game.Enums;
+using Snake.Game.Managers;
 using Snake.Game.Render;
 using System;
 
@@ -45,12 +46,12 @@ namespace Snake.Game
         public void Move(Vector2D position, bool render, bool isOffset)
            => Move(position, render, render, isOffset);
 
-        public void Move(Vector2D position, bool render = true, bool clear = true, bool isOffset = false)
+        public void Move(Vector2D position, bool render = true, bool clear = true, bool positionIsOffset = false)
         {
             if (clear)
                 ClearRender();
 
-            if (isOffset)
+            if (positionIsOffset)
                 Position += position;
             else
                 Position = position;

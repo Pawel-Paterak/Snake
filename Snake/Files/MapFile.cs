@@ -1,4 +1,5 @@
-﻿using Snake.Game;
+﻿using Snake.Configurations;
+using Snake.Game;
 using System.Collections.Generic;
 
 namespace Snake.Files
@@ -17,5 +18,16 @@ namespace Snake.Files
             StartPoint = startPoint;
             Objects = objects;
         }
+
+        public void Initialize()
+        {
+            ConsoleConfig config = new ConsoleConfig();
+            config.Resize(Size.X, Size.Y);
+            foreach (GameObject obj in Objects)
+                obj.Create();
+        }
+
+        public override string ToString()
+            => Name;
     }
 }

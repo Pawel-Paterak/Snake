@@ -1,6 +1,6 @@
 ﻿namespace Snake.Game.Enums
 {
-    public enum MainMenuEnum
+    public enum MainMenuEnums
     {
         CustomsSnake,
         Multiplayer,

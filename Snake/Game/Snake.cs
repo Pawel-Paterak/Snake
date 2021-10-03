@@ -3,6 +3,7 @@ using Snake.Controlers;
 using System.Collections.Generic;
 using Snake.Game.Enums;
 using Snake.Configurations;
+using Snake.Game.Managers;
 
 namespace Snake.Game
 {
@@ -19,7 +20,6 @@ namespace Snake.Game
 
         public void Start(Vector2D startPoint)
         {
-            ConsoleConfig config = new ConsoleConfig();
             SnakeBody.Add(new GameObject("Head", new Vector2D(startPoint.X, startPoint.Y), SkinSnake, ColorSnake, GameObjectTagEnum.Object, true));
             SnakeBody[0].Create();
             KeyboardControl.PressKeyEvent += OnPressKey;
@@ -42,21 +42,23 @@ namespace Snake.Game
 
         public bool Move()
         {
-            Vector2D vecDirection = VectorDirection(direction);
+            Vector2D vecDirection = GetVectorDirection(direction);
 
-            if (!VeryficationDirection())
+            if (!CheckMovment())
                 return false;
 
-            if (VeryficationCollision(vecDirection))
+            if (CheckCollision(vecDirection))
                 return false;
 
-            MoveBody();
+            CheckObjectInMyPosition();
+
+            MoveSnakeBody();
             SnakeBody[0].Move(vecDirection, true, false, true) ;
             previousDirection = direction;
             return true;
         }
 
-        private Vector2D VectorDirection(Direction direction)
+        private Vector2D GetVectorDirection(Direction direction)
         {
             Vector2D vectorDirection = new Vector2D(0, 0);
             switch (direction)
@@ -77,76 +79,69 @@ namespace Snake.Game
             return vectorDirection;
         }
 
-        private bool VeryficationDirection()
+        private bool CheckMovment()
         {
-            Vector2D previous = VectorDirection(previousDirection);
-            Vector2D next =  VectorDirection(direction);
+            Vector2D previous = GetVectorDirection(previousDirection);
+            Vector2D next =  GetVectorDirection(direction);
             if (!previous == next)
                 return false;
             return true;
         }
 
-        private bool VeryficationCollision(Vector2D direction)
+        private bool CheckCollision(Vector2D direction)
         {
             GameManager gm = new GameManager();
-            GameObject obj = gm.GetObject(SnakeBody[0].Position+ direction);
-            if (obj == null)
-                return false;
-
-            if (obj.Collision)
-                return true;
-            else
-            {
-                switch(obj.Name)
-                {
-                    case "Apple":
-                        {
-                            obj.Destroy();
-                            AddBody();
-                            if (Difficulti == DifficultiGameEnum.Easy)
-                                Scores += 5;
-                            else if (Difficulti == DifficultiGameEnum.Medium)
-                                Scores += 10;
-                            else
-                                Scores += 15;
-                            break;
-                        }
-                }
-
-                switch(obj.Tag)
-                {
-                    case GameObjectTagEnum.Teleport:
-                        {
-                            string name = obj.Name;
-
-                            int startTeleportFrom = name.IndexOf(';')+1;
-                            int startTeleportTo = name.IndexOf(';', startTeleportFrom) +1;
-
-                            string teleportNumberFrom = name.Substring(startTeleportFrom, startTeleportTo - startTeleportFrom - 1);
-                            string teleportNumberTo = name.Substring(startTeleportTo, name.Length- startTeleportTo);
-
-                            int.TryParse(teleportNumberFrom, out int teleportFromNumber);
-                            int.TryParse(teleportNumberTo, out int teleportToNumber);
-
-                            GameObject teleport = gm.FindObject("Teleport;"+ teleportToNumber + ";"+ teleportFromNumber);
-                            if (teleport != null)
-                                SnakeBody[0].Move(teleport.Position, false);
-                            break;
-                        }
-                }
-            }
-
-            return false;
+            Vector2D position = SnakeBody[0].Position+direction;
+            GameObject obj = gm.GetObject(position);
+            return obj != null && obj.Collision && obj.Position == position;
         }
 
-        private void AddBody()
+        private void CheckObjectInMyPosition()
+        {
+            GameManager gm = new GameManager();
+            Vector2D position = SnakeBody[0].Position;
+            GameObject obj = gm.GetObject(position, SnakeBody[0]);
+            if (obj == null)
+                return;
+
+            switch (obj.Name)
+            {
+                case "Apple":
+                    {
+                        obj.Destroy();
+                        AddSnakeBody();
+                        if (Difficulti == DifficultiGameEnum.Easy)
+                            Scores += 5;
+                        else if (Difficulti == DifficultiGameEnum.Medium)
+                            Scores += 10;
+                        else
+                            Scores += 15;
+                        break;
+                    }
+            }
+
+            switch (obj.Tag)
+            {
+                case GameObjectTagEnum.Teleport:
+                    {
+                        string name = obj.Name;
+                        Teleport teleport = new Teleport();
+                        GameObject objTeleport = gm.FindObject(teleport.GetNameTeleportTo(name));
+                        if (objTeleport != null)
+                            SnakeBody[0].Move(objTeleport.Position, false);
+                        break;
+                    }
+            }
+        }
+
+        private void AddSnakeBody()
         {
             Vector2D position = SnakeBody[SnakeBody.Count - 1].Position;
             SnakeBody.Add(new GameObject("Body"+(SnakeBody.Count-1), position, SkinSnake, ColorSnake, GameObjectTagEnum.Object, true));
             SnakeBody[SnakeBody.Count-1].Create();
         }
 
-        private void MoveBody()
+        private void MoveSnakeBody()
         {
             SnakeBody[SnakeBody.Count - 1].ClearRender();
             for (int i = SnakeBody.Count - 1; i > 0; i--)

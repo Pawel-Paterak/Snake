@@ -1,116 +1,95 @@
 ﻿using Snake.Configurations;
 using Snake.Files;
-using Snake.Files.Json;
 using Snake.Game.Menu;
 using Snake.Extensions;
-using System;
-using Snake.Game.Enums;
+using Snake.Game.Settings;
 
 namespace Snake.Game.Render
 {
     public class MenuRender
     {
-        private ConsoleRender Render { get; set; }  = new ConsoleRender();
-        private MenuConfig Config { get; set; } = new MenuConfig();
+        private readonly ConsoleRender render = new ConsoleRender();
+        private readonly ConsoleConfig consoleConfig = new ConsoleConfig();
+        private readonly MenuConfig menuConfig = new MenuConfig();
 
         public void MainMenuRender()
         {
-            Render.Clear();
-            ConsoleConfig config = new ConsoleConfig();
+            render.Clear();
             MenuManager menuManager = new MenuManager();
             Frame();
 
-            int widht = config.CenterX;
-            int height = config.CenterY - Config.MenuOptions.HalfLength();
-            for (int i = 0; i < Config.MenuOptions.Length; i++)
+            int widht = consoleConfig.CenterX;
+            int height = consoleConfig.CenterY - menuConfig.MenuOptions.HalfLength();
+            for (int i = 0; i < menuConfig.MenuOptions.Length; i++)
             {
-                string text = Config.MenuOptions[i];
-                if (i == menuManager.GetOptionChoose())
+                string text = menuConfig.MenuOptions[i];
+                int textHeigth = height + 2 * i;
+                if (i == menuManager.GetActiveOption())
                     text = "> " + text + " <";
-                Render.Write(text, widht - text.HalfLength(), height + 2 * i);
+                RenderText(text, widht - text.HalfLength(), textHeigth);
             }
         }
 
-        public void CustomsSnakeMenuRender()
+        public void MenuSnakeRender()
         {
-            Render.Clear();
-            ConsoleConfig config = new ConsoleConfig();
+            render.Clear();
             MenuManager menuManager = new MenuManager();
             GameConfig gameConfig = new GameConfig();
+            GameSettings gameSettings = new GameSettings();
             Frame();
-            int widht = config.CenterX;
-            int height = config.CenterY - (Config.CustomsSnakeOptions.Length + 2) / 2;
-            int option = menuManager.GetOptionChoose();
-            int chooseColor = menuManager.GetChooseColor();
-            int chooseSkin = menuManager.GetChooseSkins();
-            for (int i = 0; i < Config.CustomsSnakeOptions.Length; i++)
+            int widht = consoleConfig.CenterX;
+            int height = consoleConfig.CenterY - menuConfig.MenuCustomsSnakeOptions.HalfLength();
+            int option = menuManager.GetActiveOption();
+            int selectedColor = gameSettings.GetNumberColor();
+            int selectedSkin = gameSettings.GetNumberSkin();
+            for (int i = 0; i < menuConfig.MenuCustomsSnakeOptions.Length; i++)
             {
-                string text = Config.CustomsSnakeOptions[i];
+                string text = menuConfig.MenuCustomsSnakeOptions[i];
                 int textHeigth = height + 2 * i;
                 if (option == i && i != 0 && i != 1)
                     text = "> " + text + " <";
 
                 if (i == 0)
-                {
-                    if (option != 0)
-                        text += " " + gameConfig.ColorsSnake[chooseColor];
-                    else
-                        text = RenderCustomsColorOption(chooseColor);
-                }
+                    text = GetTextAdvencedOptions(text, option, i, gameConfig.Colors, selectedColor);
                 else if (i == 1)
-                {
-                    if (option != 1)
-                        text += " " + gameConfig.SkinsSnake[chooseSkin];
-                    else
-                        text = RenderCustomsSkinsOption(chooseSkin);
-                }
-                Render.Write(text, widht - text.HalfLength(), textHeigth);
+                    text = GetTextAdvencedOptions(text, option, i, gameConfig.Skins, selectedSkin);
+                RenderText(text, widht - text.HalfLength(), textHeigth);
             }
         }
 
-        public void GameSettingsMenuRender()
+        public void MenuGameRender()
         {
-            Render.Clear();
-            ConsoleConfig config = new ConsoleConfig();
+            render.Clear();
             MenuManager menuManager = new MenuManager();
             GameConfig gameConfig = new GameConfig();
+            GameSettings gameSettings = new GameSettings();
             Frame();
-            int widht = config.CenterX;
-            int height = config.CenterY - Config.GameSettingsOptions.HalfLength();
-            int option = menuManager.GetOptionChoose();
-            int chooseMap = menuManager.GetChooseMap();
-            int chooseDifficulti = menuManager.GetChooseDifficulti();
-            for (int i = 0; i < Config.GameSettingsOptions.Length; i++)
+            int widht = consoleConfig.CenterX;
+            int height = consoleConfig.CenterY - menuConfig.MenuGameOptions.HalfLength();
+            int option = menuManager.GetActiveOption();
+            int selectedMap = gameSettings.GetNumberMap();
+            int seletcedDifficulti = gameSettings.GetNumberDifficulti();
+            for (int i = 0; i < menuConfig.MenuGameOptions.Length; i++)
             {
-                string text = Config.GameSettingsOptions[i];
+                string text = menuConfig.MenuGameOptions[i];
                 int textHeigth = height + 2 * i;
                 if (option == i && i != 0 && i != 1)
                     text = "> " + text + " <";
 
                 if (i == 0)
-                {
-                    if (option != 0)
-                        text += " " + gameConfig.Maps[chooseMap].Name;
-                    else
-                        text = RenderGameSettingsMapOption(chooseMap);
-                }
+                    text = GetTextAdvencedOptions(text, option, i, gameConfig.Maps, selectedMap);
                 else if (i == 1)
-                {
-                    if (option != 1)
-                        text += " " + gameConfig.Difficulti[chooseDifficulti].ToString();
-                    else
-                        text = RenderGameSettingsDifficultiOption(chooseDifficulti);
-                }
-                Render.Write(text, widht - text.HalfLength(), textHeigth);
+                    text = GetTextAdvencedOptions(text, option, i, gameConfig.Difficulti, seletcedDifficulti);
+                RenderText(text, widht - text.HalfLength(), textHeigth);
             }
         }
 
-        public void ScoresMenuRender()
+        public void MenuScoresRender()
         {
-            Render.Clear();
+            render.Clear();
             Frame();
-            JsonManager json = new JsonManager();
-            ScoresFile scoresFile = json.Read<ScoresFile>(GameConfig.ScoresFile);
+            FileManager file = new FileManager();
+            ScoresFile scoresFile = file.GetScores();
             if (scoresFile != null)
             {
                 for (int i = 0; i < scoresFile.MaxSlots; i++)
@@ -118,100 +97,56 @@ namespace Snake.Game.Render
                     if (scoresFile.Scores.Count > i)
                     {
                         string text = (i + 1) + ": ";
+                        int textHeigth = 2 + 2 * i;
                         text += scoresFile.Scores[i].Name + " " + scoresFile.Scores[i].Scores;
-                        Render.Write(text, 2, 2 + 2 * i);
+                        RenderText(text, 2, textHeigth);
                     }
                 }
             }
 
-            Render.Write("> "+Config.ScoreOption+" <", 2, 36);
+            RenderText("> "+menuConfig.MenuScoreOptions+" <", 2, 36);
         }
 
         public void Frame()
         {
-            ConsoleConfig console = new ConsoleConfig();
-            for (int x = 0; x < console.Widht; x++)
+            for (int x = 0; x < consoleConfig.Widht; x++)
             {
-                Render.Write("#", x, 0);
-                Render.Write("#", x, console.Height - 2);
+                render.Write("#", x, 0);
+                render.Write("#", x, consoleConfig.Height - 2);
             }
 
-            for (int y = 0; y < console.Height - 1; y++)
+            for (int y = 0; y < consoleConfig.Height - 1; y++)
             {
-                Render.Write("#", 0, y);
-                Render.Write("#", console.Widht - 1, y);
+                render.Write("#", 0, y);
+                render.Write("#", consoleConfig.Widht - 1, y);
             }
         }
 
-        private string RenderCustomsSkinsOption(int choose)
+        private string GetTextAdvencedOptions<T>(string text, int option, int i, T[] objects, int selectedOption)
         {
-            GameConfig gameConfig = new GameConfig();
-            char[] skins = gameConfig.SkinsSnake;
+            if (option != i)
+                text += " " + objects[selectedOption].ToString();
+            else
+                text = AdvancedOptions(selectedOption, objects);
+            return text;
+        }
 
-            int index = choose - 1;
+        private string AdvancedOptions<T>(int selectedOption, T[] objects)
+        {
+            int index = selectedOption - 1;
             if (index < 0)
-                index = skins.Length - 1;
-            string text = skins[index] + " > " + skins[choose] + " < ";
+                index = objects.Length - 1;
+            string text = objects[index].ToString() + " > " + objects[selectedOption].ToString() + " < ";
 
-            index = choose + 1;
-            if (index > skins.Length - 1)
+            index = selectedOption + 1;
+            if (index > objects.Length - 1)
                 index = 0;
-            text += skins[index];
+            text += objects[index].ToString();
 
             return text;
         }
 
-        private string RenderCustomsColorOption(int choose)
-        {
-            GameConfig gameConfig = new GameConfig();
-            ConsoleColor[] colors = gameConfig.ColorsSnake;
-
-            int index = choose - 1;
-            if (index < 0)
-                index = colors.Length - 1;
-            string text = colors[index] + " > " + colors[choose] + " < ";
-
-            index = choose + 1;
-            if (index > colors.Length - 1)
-                index = 0;
-            text += colors[index];
-
-            return text;
-        }
-
-        private string RenderGameSettingsDifficultiOption(int choose)
-        {
-            GameConfig gameConfig = new GameConfig();
-            DifficultiGameEnum[] difficulti = gameConfig.Difficulti;
-
-            int index = choose - 1;
-            if (index < 0)
-                index = difficulti.Length - 1;
-            string text = difficulti[index].ToString() + " > " + difficulti[choose].ToString() + " < ";
-
-            index = choose + 1;
-            if (index > difficulti.Length - 1)
-                index = 0;
-            text += difficulti[index].ToString();
-
-            return text;
-        }
-
-        private string RenderGameSettingsMapOption(int choose)
-        {
-            GameConfig gameConfig = new GameConfig();
-            MapFile[] map = gameConfig.Maps;
-            int index = choose - 1;
-            if (index < 0)
-                index = map.Length - 1;
-            string text = map[index].Name + " > " + map[choose].Name + " < ";
-
-            index = choose + 1;
-            if (index > map.Length - 1)
-                index = 0;
-            text += map[index].Name;
-
-            return text;
-        }
+        private void RenderText(string text, int x, int y)
+            => render.Write(text, x, y);
     }
 }
