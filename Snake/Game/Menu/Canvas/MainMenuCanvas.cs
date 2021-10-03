@@ -18,7 +18,40 @@ namespace Snake.Game.Menu.Canvas
             CountOption = 4;
             MenuRender menuRender = new MenuRender();
             Render = menuRender.MainMenuRender;
-            Action = MenuManager.Singleton.MainMenu;
+            Action = MainMenu;
+        }
+
+        private void MainMenu()
+        {
+            MenuManager menu = MenuManager.Singleton;
+            switch ((MainMenuEnums)menu.ActiveOption)
+            {
+                case MainMenuEnums.CustomsSnake:
+                    {
+                        menu.ActiveCanvas = CanvasEnum.CustomsSnake;
+                        break;
+                    }
+                case MainMenuEnums.Scores:
+                    {
+                        menu.ActiveCanvas = CanvasEnum.Scores;
+                        break;
+                    }
+                case MainMenuEnums.Exit:
+                    {
+                        CloseConsole();
+                        break;
+                    }
+                default:
+                    {
+                        break;
+                    }
+            }
+        }
+
+        private void CloseConsole()
+        {
+            Core.Closing = true;
+            MenuManager.Singleton.IsRenderCanvas = false;
         }
     }
 }

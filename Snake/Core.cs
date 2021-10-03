@@ -1,11 +1,8 @@
-﻿using System.Collections.Generic;
-using Snake.Controlers;
-using Snake.Game;
+﻿using Snake.Controlers;
 using Snake.Game.Enums;
-using Snake.Files.Json;
 using Snake.Files;
-using Snake.Configurations;
 using Snake.Game.Menu;
+using Snake.Game.Managers;
 
 namespace Snake
 {
@@ -41,13 +38,12 @@ namespace Snake
             => menu.RenderCanvas(CanvasEnum.MainMenu);
 
         private void StartGame()
-            =>   game.Start();
+            => game.Start();
 
         private void Veryfications()
         {
-            JsonManager jManager = new JsonManager();
-            if(!jManager.FileExists(GameConfig.ScoresFile))
-                jManager.Write(GameConfig.ScoresFile, new ScoresFile(new List<Score>()));
+            FileManager file = new FileManager();
+            file.ExistsScoresFile();
         }
     }
 }

@@ -17,8 +17,25 @@ namespace Snake.Game.Menu.Canvas
             Canvas = CanvasEnum.Scores;
             CountOption = 1;
             MenuRender menuRender = new MenuRender();
-            Render = menuRender.ScoresMenuRender;
-            Action = MenuManager.Singleton.ScoresMenu;
+            Render = menuRender.MenuScoresRender;
+            Action = ScoresMenu;
+        }
+
+        private void ScoresMenu()
+        {
+            MenuManager menu = MenuManager.Singleton;
+            switch ((ScoresEnum)menu.ActiveOption)
+            {
+                case ScoresEnum.back:
+                    {
+                        menu.ActiveCanvas = CanvasEnum.MainMenu;
+                        break;
+                    }
+                default:
+                    {
+                        break;
+                    }
+            }
         }
     }
 }

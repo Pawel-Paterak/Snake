@@ -50,7 +50,7 @@ namespace Snake.Files.Json
             return temp;
         }
 
-        public bool DirectoryExists(string path)
+        public bool DirectoryExist(string path)
             => Directory.Exists(path);
 
         public bool FileExists(string path)

@@ -3,13 +3,13 @@
     public class MenuConfig
     {
         public int CountMenuOptions { get => MenuOptions.Length; }
-        public int CountCustomsSnakeOptions { get => CustomsSnakeOptions.Length; }
-        public int CountLevelOptions { get => GameSettingsOptions.Length; }
+        public int CountMenuCustomsSnakeOptions { get => MenuCustomsSnakeOptions.Length; }
+        public int CountMenuGameOptions { get => MenuGameOptions.Length; }
         public int CountScoreOptions { get; private set; } = 1;
         public string[] MenuOptions { get; private set; }
-        public string[] CustomsSnakeOptions { get; private set; }
-        public string[] GameSettingsOptions { get; private set; }
-        public string ScoreOption { get; private set; } = "Back";
+        public string[] MenuCustomsSnakeOptions { get; private set; }
+        public string[] MenuGameOptions { get; private set; }
+        public string MenuScoreOptions { get; private set; } = "Back";
 
         public MenuConfig()
         {
@@ -29,20 +29,20 @@
 
         private void InitializeCustomsSnake()
         {
-            CustomsSnakeOptions = new string[4];
-            CustomsSnakeOptions[0] = "Color";
-            CustomsSnakeOptions[1] = "Skin";
-            CustomsSnakeOptions[2] = "Next";
-            CustomsSnakeOptions[3] = "Back";
+            MenuCustomsSnakeOptions = new string[4];
+            MenuCustomsSnakeOptions[0] = "Color";
+            MenuCustomsSnakeOptions[1] = "Skin";
+            MenuCustomsSnakeOptions[2] = "Next";
+            MenuCustomsSnakeOptions[3] = "Back";
         }
 
         private void InitializeGameSettings()
         {
-            GameSettingsOptions = new string[4];
-            GameSettingsOptions[0] = "Map";
-            GameSettingsOptions[1] = "Difficulti";
-            GameSettingsOptions[2] = "Play";
-            GameSettingsOptions[3] = "Back";
+            MenuGameOptions = new string[4];
+            MenuGameOptions[0] = "Map";
+            MenuGameOptions[1] = "Difficulti";
+            MenuGameOptions[2] = "Play";
+            MenuGameOptions[3] = "Back";
         }
     }
 }

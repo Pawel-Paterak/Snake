@@ -1,4 +1,4 @@
-﻿namespace Snake.Game
+﻿namespace Snake.Game.Enums
 {
     public enum Direction
     {

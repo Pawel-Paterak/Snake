@@ -11,7 +11,6 @@ namespace Snake.Controlers
         public static Action<ConsoleKey> PressKeyEvent { get; set; }
         public static Action KeyboardCloseEvent { get; set; }
 
-        private bool waitForKey;
         private bool isRunning;
         private Task loopTask;
 
@@ -44,10 +43,8 @@ namespace Snake.Controlers
         {
             do
             {
-                waitForKey = true;
                 ConsoleKeyInfo keyInfo = Console.ReadKey(true);
                 PressKeyEvent?.Invoke(keyInfo.Key);
-                waitForKey = false;
             } while (isRunning);
             KeyboardCloseEvent?.Invoke();
         }

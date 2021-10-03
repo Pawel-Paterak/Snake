@@ -6,7 +6,7 @@ namespace Snake.Files
     public class ScoresFile
     {
         public int MaxSlots { get; private set; } = 17;
-        public List<Score> Scores { get; set; } = new List<Score>();
+        public List<Score> Scores { get; set; }
 
         public ScoresFile(List<Score> scores)
         {
@@ -23,7 +23,7 @@ namespace Snake.Files
                 return;
             }
 
-            for (int i = MaxSlots - 2; i > 0; i--)
+            for (int i = MaxSlots - 1; i > 0; i--)
             {
                 if (Scores[i].Scores >= score.Scores)
                 {
@@ -31,7 +31,6 @@ namespace Snake.Files
                     return;
                 }
             }
-
         }
 
         private void VeryficationLenghtScores()
@@ -49,7 +48,9 @@ namespace Snake.Files
                 int countScores = Scores.Count;
                 for (int i = countScores - 1; i > index; i--)
                     Scores[i] = Scores[i - 1];
-                Scores[index] = score;
+
+                if(index < MaxSlots)
+                    Scores[index] = score;
         }
     }
 }
